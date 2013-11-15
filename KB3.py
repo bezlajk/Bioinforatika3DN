@@ -145,19 +145,18 @@ def pp_alignment(s, t, walk):
     print pt
     
 #=============================================================================
-def racunaj(s):#,t):
+def racunaj(s,t):
 ##    s = 'VIVALASVEGAS'
 ##    t = 'VIVADAVIS'
 ##    s=seq
-    t=data["C01"]
-    print len(t)
+##    t=data["C01"]
 ##    print 's:', s,
 ##    print 't:', t
 ##    print
     import time
-    t1 = time.time()
+##    t1 = time.time()
 ##    mat, pr = align_nw(s, t, blosum50)
-    print "TIME", time.time() - t1
+##    print "TIME", time.time() - t1
 
 ##    w = traceback_nw(s, t, pr)
 ##    print "score of the global alignment:", mat[-1][-1]
@@ -172,24 +171,26 @@ def racunaj(s):#,t):
     print "score (of the best) local alignment:", loc_score
 
     print
+
     
-    for i, r in enumerate(mat):
-        if loc_score in r:
-            j = r.index(loc_score)
-            print "possible local alignment with score:", mat[i][j]
-            w = traceback_sw(s, t, pr, mat, (i, j))
-            pp_alignment(s, t, w)
-            print
+##    for i, r in enumerate(mat):
+##        if loc_score in r:
+##            j = r.index(loc_score)
+##            print "possible local alignment with score:", mat[i][j]
+##            w = traceback_sw(s, t, pr, mat, (i, j))
+##            pp_alignment(s, t, w)
+##            print
 
         
 
-for i in range(len(seq)):
-        racunaj(seq[i])
+##for i in range(len(seq)):
+##        racunaj(seq[i])
 
-##for d in data.keys():
-##    for i in range(len(seq)):
-##        racunaj(seq[i], data[d])
-##
+for d in data.keys():
+    for i in range(len(seq)):
+        print d, i, len(data[d]) 
+        racunaj(seq[i], data[d])
+
 ##    for i in range(len(seq_r)):
 ##        racunaj(seq_r[i],data[d])
 
