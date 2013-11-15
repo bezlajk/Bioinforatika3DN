@@ -191,8 +191,8 @@ for d in data.keys():
         print d, i, len(data[d]) 
         racunaj(seq[i], data[d])
 
-##    for i in range(len(seq_r)):
-##        racunaj(seq_r[i],data[d])
+    for i in range(len(seq_r)):
+        racunaj(seq_r[i],data[d])
 
 
     
