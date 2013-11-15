@@ -20,33 +20,11 @@ data1=read("dnaC00C39.txt")
 data2=read("dnaC40C79.txt")
 #print seq
 
-def read(ime):
-    """Iz datodeke ime preberi podake in jih vrni kot seznam."""
-    slovar={}
-    f = open(ime)
-    fc = f.read()
-    fc = fc.split("\n")
-    for r in fc:
-        s=r.split("\t")
-        slovar[s[0]]=s[1]
-    return slovar
-
-data=read("aminoacids.txt")
-
 #==========================================================================
-def pretvori(data):
-    seq =[]
-    for i in range(3):
-        data1=data[i:]
-        seq.append(str(Bio.Seq.Seq(data1).translate(table=6)))
-    return seq
 
-seq=pretvori(data1)
-seq_r=pretvori(data1[::-1])
+seq1=str(Bio.Seq.Seq(data1).translate(table=6))
+seq2=str(Bio.Seq.Seq(data2).translate(table=6))
 
-
-
-#==========================================================================
 
 def read_table(fname):
     d = {}
@@ -88,7 +66,6 @@ def align_nw(s, t, delta, gap_p=-1):
                 (M[i-1][j-1] + delta[(s[i-1], t[j-1])], (i-1, j-1)))
     return M, pred
 
-#=============================================================================
 def align_sw(s, t, delta, gap_p=-1):
     M = [[0]*(len(t)+1) for i in range(len(s)+1)]
     pred = [[(0,0)]*(len(t)+1) for i in range(len(s)+1)]
@@ -143,36 +120,33 @@ def pp_alignment(s, t, walk):
     print ps
     print "".join([' ', '|'][ns == nt] for ns, nt in zip(ps, pt))
     print pt
-    
-#=============================================================================
-def racunaj(s):#,t):
-##    s = 'VIVALASVEGAS'
-##    t = 'VIVADAVIS'
-##    s=seq
-    t=data["C01"]
-    print len(t)
-##    print 's:', s,
-##    print 't:', t
-##    print
+
+if __name__ == "__main__":
+    s = 'VIVALASVEGAS'
+    t = 'VIVADAVIS'
+    print 's:', s,
+    print 't:', t
+    print
     import time
     t1 = time.time()
-##    mat, pr = align_nw(s, t, blosum50)
+    mat, pr = align_nw(s, t, blosum50)
     print "TIME", time.time() - t1
 
-##    w = traceback_nw(s, t, pr)
-##    print "score of the global alignment:", mat[-1][-1]
+    w = traceback_nw(s, t, pr)
+    print "score of the global alignment:", mat[-1][-1]
 
-    #pp_alignment(s, t, w)
+    pp_alignment(s, t, w)
     print
 
-#________________________________________________
+
     print "local alignment"
     mat, pr = align_sw(s, t, delta_book) #blosum50)
     loc_score = max(max(r) for r in mat)
     print "score (of the best) local alignment:", loc_score
 
     print
-    
+
+
     for i, r in enumerate(mat):
         if loc_score in r:
             j = r.index(loc_score)
@@ -180,18 +154,3 @@ def racunaj(s):#,t):
             w = traceback_sw(s, t, pr, mat, (i, j))
             pp_alignment(s, t, w)
             print
-
-        
-
-for i in range(len(seq)):
-        racunaj(seq[i])
-
-##for d in data.keys():
-##    for i in range(len(seq)):
-##        racunaj(seq[i], data[d])
-##
-##    for i in range(len(seq_r)):
-##        racunaj(seq_r[i],data[d])
-
-
-    
