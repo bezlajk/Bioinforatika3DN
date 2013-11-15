@@ -173,20 +173,20 @@ def racunaj(s,t):
     print
 
     
-##    for i, r in enumerate(mat):
-##        if loc_score in r:
-##            j = r.index(loc_score)
-##            print "possible local alignment with score:", mat[i][j]
-##            w = traceback_sw(s, t, pr, mat, (i, j))
-##            pp_alignment(s, t, w)
-##            print
+    for i, r in enumerate(mat):
+        if loc_score in r:
+            j = r.index(loc_score)
+            print "possible local alignment with score:", mat[i][j]
+            w = traceback_sw(s, t, pr, mat, (i, j))
+            pp_alignment(s, t, w)
+            print
 
         
 
 ##for i in range(len(seq)):
 ##        racunaj(seq[i])
-
-for d in data.keys():
+dobri=["C01","C03","C05","C08","C25","C36","C29"]
+for d in dobri:#data.keys():
     for i in range(len(seq)):
         print d, i, len(data[d]) 
         racunaj(seq[i], data[d])
