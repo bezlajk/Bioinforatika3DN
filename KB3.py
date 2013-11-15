@@ -31,7 +31,7 @@ def read(ime):
         slovar[s[0]]=s[1]
     return slovar
 
-data=read("aminoacids.txt")
+data=read("aminoacids0-39.txt")
 
 #==========================================================================
 def pretvori(data):
