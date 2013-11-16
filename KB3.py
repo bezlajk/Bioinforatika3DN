@@ -45,47 +45,55 @@ amino=read("amino_file.txt",'a')
 
 
 #==========================================================================
-#ORF
-def codon_walk(s, frame=0):
-    for ix in range(frame, len(s), 3):
-        yield ix, s[ix:ix+3]
-
-
-def ORF(s,start_codon,stop_codon):             
-    genes=[]
-    for frame in range(3):
-        startP=None
-        codon_f=codon_walk(s, frame)
-        for st, codon in codon_f:
-            if codon in start_codon and startP==None:
-                startP=st
-            if codon in stop_codon and startP!=None:
-                genes.append((startP,st))
-                startP=None
-    return genes
-
-geni1=ORF(data1,amino[0][1:],amino[-1][1:])
-geni2=ORF(data1[::-1],amino[0][1:],amino[-1][1:])
-
-geni=geni1+geni2
-##for g in geni:
-##    print g
-##    
-print len(geni)
-a= str(Bio.Seq.Seq(data1[23923:24202]).translate(table=6))
-b= data['C01']
-print a,'\n',b
+###ORF
+##def codon_walk(s, frame=0):
+##    for ix in range(frame, len(s), 3):
+##        yield ix, s[ix:ix+3]
+##
+##
+##def ORF(s,start_codon,stop_codon):             
+##    genes=[]
+##    for frame in range(3):
+##        startP=None
+##        codon_f=codon_walk(s, frame)
+##        for st, codon in codon_f:
+##            if codon in start_codon and startP==None:
+##                startP=st
+##            if codon in stop_codon and startP!=None:
+##                genes.append((startP,st))
+##                startP=None
+##    return genes
+##
+##geni1=ORF(data1,amino[0][1:],amino[-1][1:])
+##geni2=ORF(data1[::-1],amino[0][1:],amino[-1][1:])
+##
+##geni=geni1+geni2
+####for g in geni:
+####    print g
+####    
+##print len(geni)
+##a= str(Bio.Seq.Seq(data1[23923:24202]).translate(table=6))
+##b= data['C01']
+##print a,'\n',b
 
 #==========================================================================
-def prevedi(geni,data):
-    seznam=[]
-    for g in geni:
-        gen=data[g[0]:g[1]]
-        seznam.append(str(Bio.Seq.Seq(gen).translate(table=6)))
-    return seznam
+##def prevedi(geni,data):
+##    seznam=[]
+##    for g in geni:
+##        gen=data[g[0]:g[1]]
+##        seznam.append(str(Bio.Seq.Seq(gen).translate(table=6)))
+##    return seznam
 
-seznam = prevedi(geni1,data1)+prevedi(geni2,data1[::-1])
-print seznam[0]
+def prevedi(data):
+    seznam=[]
+    for i in range(3):
+        seznam.append(str(Bio.Seq.Seq(data[i:]).translate(table=6)))
+    return seznam
+        
+seznam=prevedi(data1)+prevedi(data1[::-1])
+print len(seznam)
+##seznam = prevedi(geni1,data1)+prevedi(geni2,data1[::-1])
+##print seznam[0]
 #==========================================================================
 
 def read_table(fname):
@@ -194,15 +202,15 @@ def racunaj(s,t):
 ##    print 't:', t
 ##    print
     import time
-    t1 = time.time()
-    mat, pr = align_nw(s, t, blosum50)
-    print "TIME", time.time() - t1
-
-    w = traceback_nw(s, t, pr)
-    print "score of the global alignment:", mat[-1][-1]
-
-    pp_alignment(s, t, w)
-    print
+##    t1 = time.time()
+##    mat, pr = align_nw(s, t, blosum50)
+##    print "TIME", time.time() - t1
+##
+##    w = traceback_nw(s, t, pr)
+##    print "score of the global alignment:", mat[-1][-1]
+##
+##    pp_alignment(s, t, w)
+##    print
 
 #________________________________________________
     print "local alignment"
@@ -225,14 +233,14 @@ def racunaj(s,t):
 
 ##for i in range(len(seq)):
 ##        racunaj(seq[i])
-##dobri=["C01"]#,"C03","C05","C08","C25","C36","C29"]
-##for d in dobri:#data.keys():
-##    for s in seznam:
-##        print d, len(s), len(data[d]) 
-##        racunaj(s, data[d])
+dobri=["C01"]#,"C03","C05","C08","C25","C36","C29"]
+for d in dobri:#data.keys():
+    for s in seznam:
+        print d, len(s), len(data[d]) 
+        racunaj(s, data[d])
 
 ##        for i in range(len(seq_r)):
 ##            racunaj(seq_r[i],data[d])
 
 
-racunaj(b,a)    
+##racunaj(b,a)    
