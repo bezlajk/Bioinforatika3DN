@@ -45,6 +45,46 @@ amino=read("amino_file.txt",'a')
 
 
 #==========================================================================
+#ORF
+def codon_walk(s, frame=0):
+    for ix in range(frame, len(s), 3):
+        yield ix, s[ix:ix+3]
+
+
+def ORF(s,start_codon,stop_codon):             
+    genes=[]
+    geni=[]
+    for frame in range(3):
+        startP=None
+        codon_f=codon_walk(s, frame)
+        for st, codon in codon_f:
+            if codon in start_codon and startP==None:
+                startP=st
+            if codon in stop_codon and startP!=None:
+                genes.append((startP,st))
+                startP=None
+        geni.append(genes)
+    return geni
+
+geni1=ORF(data1,amino[0][1:],amino[-1][1:])
+geni2=ORF(data1[::-1],amino[0][1:],amino[-1][1:])
+
+geni=geni1+geni2
+Geni=[]
+for i in range(len(geni)):
+    ge=[]
+    for g in geni[i]:
+        ge.append([g[0]/3,str(Bio.Seq.Seq(data1[g[0]:g[1]]).translate(table=6))])
+    Geni.append(ge)
+    
+#==========================================================================
+##def prevedi(geni,data):
+##    seznam=[]
+##    for g in geni:
+##        gen=data[g[0]:g[1]]
+##        seznam.append(str(Bio.Seq.Seq(gen).translate(table=6)))
+##    return seznam
+
 def prevedi(data):
     seznam=[]
     for i in range(3):
@@ -196,28 +236,23 @@ def izpisi(s,t,mat,pr,loc_score):
 
 #=========================================================================      
 
-def poisci_start(s,t,z,w):
-    i=z
-    j=z
-    k=z+w
-    while s[i]!='M' and s[j]!='M':
-        j-=1
-        i+=1
-    while s[k]!='*':
-        k+=1
-    if i<k:
-        sez1=s[i:k]
-        mat1, pr1, m1 = racunaj_lokalno(sez1,t)
-        izpisi(sez1,t,mat1,pr1,m1)
-    sez2=s[j:k]
-    print 'tuki'
-    racunaj_globalno(sez2,t)
+def poisci_start(s,t,z,w,geni):
+    a=None
+    stev=0
+    while True:
+        if geni[stev][0]>z:
+            break
+        stev+=1
+##    for g in geni:
+##        print g
+    for g in geni:
+        racunaj_globalno(g[1],t)
     #izpisi(sez2,t,mat2,pr2,m2)
     
     
 #=========================================================================
 
-print prevedi(data1[23923:24115])
+#print seznam[0][23923/3-1:24115/3]
 
 dobri=["C01"]#,"C03","C05","C08","C25","C36","C29"]
 for d in dobri:#data.keys():
@@ -233,10 +268,11 @@ for d in dobri:#data.keys():
             maxi_mat=mat
             maxi_pr=pr
             maxi_s=s
+            maxi_i=i
         
     z, w = izpisi(maxi_s,data[d],maxi_mat,maxi_pr,maxi)
     print
-    poisci_start(maxi_s,data[d],z,w)
+    poisci_start(maxi_s,data[d],z,w,Geni[maxi_i])
 
 
 
