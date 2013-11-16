@@ -194,7 +194,7 @@ def pp_alignment(s, t, walk):
     print pt
     
 #=============================================================================
-def racunaj(s,t):
+def racunaj_globalno(s,t):
 ##    s = 'VIVALASVEGAS'
 ##    t = 'VIVADAVIS'
 ##    s=seq
@@ -203,34 +203,39 @@ def racunaj(s,t):
 ##    print 't:', t
 ##    print
     import time
-##    t1 = time.time()
-##    mat, pr = align_nw(s, t, blosum50)
-##    print "TIME", time.time() - t1
-##
-##    w = traceback_nw(s, t, pr)
-##    print "score of the global alignment:", mat[-1][-1]
-##
-##    pp_alignment(s, t, w)
-##    print
+    t1 = time.time()
+    mat, pr = align_nw(s, t, blosum50)
+    print "TIME", time.time() - t1
+
+    w = traceback_nw(s, t, pr)
+    print "score of the global alignment:", mat[-1][-1]
+
+    pp_alignment(s, t, w)
+    print
 
 #________________________________________________
+
+def racunaj_lokalno(s,t):
     print "local alignment"
     mat, pr = align_sw(s, t, delta_book) #blosum50)
     loc_score = max(max(r) for r in mat)
     print "score (of the best) local alignment:", loc_score
     return mat, pr, loc_score
 
-def izpisi(s,t,mat,pr,loc_score):   
+def izpisi(s,t,mat,pr,loc_score):
+    print loc_score, 'ls'
     for i, r in enumerate(mat):
         if loc_score in r:
             j = r.index(loc_score)
             w, z = traceback_sw(s, t, pr, mat, (i, j))
             print "possible local alignment with score:", mat[i][j]
-            print "zaèetek sekvence je na mestu: ", z, "dolžina sekvence pa je: ", len(w)
-            pp_alignment(s, t, w)
-            print
+    print "zaèetek sekvence je na mestu: ", z, "dolžina sekvence pa je: ", len(w)
 
-        
+    pp_alignment(s, t, w)
+
+    print
+
+#=========================================================================      
 
 ##for i in range(len(seq)):
 ##        racunaj(seq[i])
@@ -239,22 +244,15 @@ for d in dobri:#data.keys():
     maxi=None
     maxi_mat=[]
     maxi_pr=[]
-    for s in seznam:
-        print d, len(s), len(data[d]) 
-        mat,pr,m = racunaj(s, data[d])
+    maxi_s=[]
+    for i, s in enumerate(seznam):
+        print d, s[i], len(data[d]) 
+        mat,pr,m = racunaj_lokalno(s, data[d])
         if m>maxi:
             maxi=m
             maxi_mat=mat
             maxi_pr=pr
-    
-izpisi(seznam[2],data[d],maxi_mat,maxi_pr,m)
+            maxi_s=s
+    izpisi(maxi_s,data[d],maxi_mat,maxi_pr,maxi)
             
-        
     
-
-print seznam[2][8139:8239]
-##        for i in range(len(seq_r)):
-##            racunaj(seq_r[i],data[d])
-
-
-##racunaj(b,a)    
