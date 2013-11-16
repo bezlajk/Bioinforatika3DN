@@ -45,79 +45,31 @@ amino=read("amino_file.txt",'a')
 
 
 #==========================================================================
-start_i="GT"
-stop_i="AG"
+#ORF
+def codon_walk(s, frame=0):
+    for ix in range(frame, len(s), 3):
+        yield ix, s[ix:ix+3]
 
-def kombiniraj(sez):
-    sez1=[]
-    for i,j in sez:
-        for k,l in sez:
-            if i<l:
-                sez1.append((i,l))
-            else:
-                sez1.append((l,i))
-    return sez1
-            
-def findIntron(seq,start_i,stop_i,start_codon,stop_codon):
-    output=[]
-    gen_start=[]
-    intron=[]
-    istart=[]
-    stop=None
-    for i,a in enumerate(seq):
-        if seq[i:i+3] in start_codon and len(gen_start)<4 and intron==[]:
-            #našli smo start kodon, lahko je prvi ali pa tudi ne
-            if gen_start==[]:
-                gen_start.append((i%3,i))
-            else:
-                frame=[f for f,_ in gen_start]
-                if i%3 not in frame:
-                    gen_start.append((i%3,i))
 
-        if seq[i:i+2] in start_i and len(istart)<4:
-            #našli smo kandidata za intron
-            if gen_start!=[] and istart==[]:
-                istart.append((i%3,i))
-            
-            elif gen_start!=[] and istart!=[]:  
-                frame_i=[f for f,_ in gen_start]
-                if i%3 not in frame_i:
-                    istart.append((i%3,i))
-                       
-        if seq[i:i+2] in stop_i:
-            #našli smo konec introna
-            [intron.append((j,i)) for _,j in istart ]
-            istart=[]
-                
-        if seq[i:i+3] in stop_codon and gen_start!=[] and istart==[]:
-            if intron!=[]:
-                introni=kombiniraj(intron)
-                for _,l in gen_start:
-                    for j,k in introni:
-                        d=(j-l)+(i-k)
-                        if d%3==0 and d<125*3:
-                            output.append((l,i))
-                            stop=1
-                            break
-                    if (l-i)%3==0 and stop!=1:
-                        output.append((l,i))
-                        stop=None
-                    elif stop==1:
-                        stop=None
-                        break
-                intron=[]
-            else:
-                for _,j in sorted(gen_start):
-                    if (j-i)%3==0:
-                        output.append((j,i))
-                        gen_start=[]
-                intron=[]
-    return output
+def ORF(s,start_codon,stop_codon):             
+    genes=[]
+    for frame in range(3):
+        startP=None
+        codon_f=codon_walk(s, frame)
+        for st, codon in codon_f:
+            if codon in start_codon and startP==None:
+                startP=st
+            if codon in stop_codon and startP!=None:
+                genes.append((startP,st))
+                startP=None
+    return genes
 
-geni1=findIntron(data1,start_i,stop_i,amino[0][1:],amino[-1][1:])
-geni2=findIntron(data1,start_i,stop_i,amino[0][1:],amino[-1][1:])
+geni1=ORF(data1,amino[0][1:],amino[-1][1:])
+geni2=ORF(data1,amino[0][1:],amino[-1][1:])
 geni=geni1+geni2
-print len(geni)
+
+for g in geni:
+    print g
 #==========================================================================
 def pretvori(data):
     seq =[]
@@ -126,9 +78,12 @@ def pretvori(data):
         seq.append(str(Bio.Seq.Seq(data1).translate(table=6)))
     return seq
 
-seq=pretvori(data1)
-seq_r=pretvori(data1[::-1])
+seznam=[]
+for g in geni:
+    gen=data1[g[0],g[1]]
+    seq=pretvori(gen)
 
+print seznam[:3]
 
 
 #==========================================================================
@@ -270,7 +225,7 @@ def racunaj(s,t):
 
 ##for i in range(len(seq)):
 ##        racunaj(seq[i])
-dobri=["C01","C03","C05","C08","C25","C36","C29"]
+dobri=["C01"]#,"C03","C05","C08","C25","C36","C29"]
 for d in dobri:#data.keys():
     for i in range(len(seq)):
         print d, i, len(data[d]) 
