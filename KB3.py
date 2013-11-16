@@ -216,14 +216,13 @@ def racunaj_globalno(s,t):
 #________________________________________________
 
 def racunaj_lokalno(s,t):
-    print "local alignment"
+    #print "local alignment"
     mat, pr = align_sw(s, t, delta_book) #blosum50)
     loc_score = max(max(r) for r in mat)
-    print "score (of the best) local alignment:", loc_score
+    #print "score (of the best) local alignment:", loc_score
     return mat, pr, loc_score
 
 def izpisi(s,t,mat,pr,loc_score):
-    print loc_score, 'ls'
     for i, r in enumerate(mat):
         if loc_score in r:
             j = r.index(loc_score)
@@ -232,13 +231,32 @@ def izpisi(s,t,mat,pr,loc_score):
     print "zaèetek sekvence je na mestu: ", z, "dolžina sekvence pa je: ", len(w)
 
     pp_alignment(s, t, w)
-
-    print
+    return z, len(w)
 
 #=========================================================================      
 
-##for i in range(len(seq)):
-##        racunaj(seq[i])
+def poisci_start(s,t,z,w):
+    i=z
+    j=z
+    k=z+w
+    while s[i]!='M' and s[j]!='M':
+        j-=1
+        i+=1
+    while s[k]!='*':
+        k+=1
+    if i<k:
+        sez1=s[i:k]
+        mat1, pr1, m1 = racunaj_lokalno(sez1,t)
+        izpisi(sez1,t,mat1,pr1,m1)
+    sez2=s[j:k]
+    print s[z:z+w],'\n'
+    print sez2,'\n \n',t
+    mat2, pr2, m2 = racunaj_lokalno(sez2,t)
+    izpisi(sez2,t,mat2,pr2,m2)
+    
+    
+#=========================================================================
+
 dobri=["C01"]#,"C03","C05","C08","C25","C36","C29"]
 for d in dobri:#data.keys():
     maxi=None
@@ -246,13 +264,13 @@ for d in dobri:#data.keys():
     maxi_pr=[]
     maxi_s=[]
     for i, s in enumerate(seznam):
-        print d, s[i], len(data[d]) 
+        #print d, i, len(data[d]) 
         mat,pr,m = racunaj_lokalno(s, data[d])
         if m>maxi:
             maxi=m
             maxi_mat=mat
             maxi_pr=pr
             maxi_s=s
-    izpisi(maxi_s,data[d],maxi_mat,maxi_pr,maxi)
-            
-    
+        
+    z, w = izpisi(maxi_s,data[d],maxi_mat,maxi_pr,maxi)
+    poisci_start(maxi_s,data[d],z,w)
