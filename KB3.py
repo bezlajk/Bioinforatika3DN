@@ -91,7 +91,6 @@ def prevedi(data):
     return seznam
         
 seznam=prevedi(data1)+prevedi(data1[::-1])
-print len(seznam)
 ##seznam = prevedi(geni1,data1)+prevedi(geni2,data1[::-1])
 ##print seznam[0]
 #==========================================================================
@@ -161,6 +160,7 @@ def align_sw(s, t, delta, gap_p=-1):
 
 
 def traceback_sw(s, t, pred, mat, zac_celica=None):
+    #tuki najdemo zaèetek niza
     walk = [zac_celica]
     prev_i, prev_j = walk[-1]
     while pred[prev_i][prev_j] != (0, 0):
@@ -168,9 +168,8 @@ def traceback_sw(s, t, pred, mat, zac_celica=None):
         if mat[prev_i][prev_j] == 0:
             break
         walk.append((prev_i, prev_j))
-    print prev_i, prev_j, 'zadnji i in j', len(walk)
     walk.reverse()
-    return walk
+    return walk, prev_i
 #======================================================================
 def pp_alignment(s, t, walk):
     def pp(indx, n):
@@ -219,15 +218,15 @@ def racunaj(s,t):
     mat, pr = align_sw(s, t, delta_book) #blosum50)
     loc_score = max(max(r) for r in mat)
     print "score (of the best) local alignment:", loc_score
+    return mat, pr, loc_score
 
-    print
-
-    
+def izpisi(s,t,mat,pr,loc_score):   
     for i, r in enumerate(mat):
         if loc_score in r:
             j = r.index(loc_score)
+            w, z = traceback_sw(s, t, pr, mat, (i, j))
             print "possible local alignment with score:", mat[i][j]
-            w = traceback_sw(s, t, pr, mat, (i, j))
+            print "zaèetek sekvence je na mestu: ", z, "dolžina sekvence pa je: ", len(w)
             pp_alignment(s, t, w)
             print
 
@@ -237,11 +236,23 @@ def racunaj(s,t):
 ##        racunaj(seq[i])
 dobri=["C01"]#,"C03","C05","C08","C25","C36","C29"]
 for d in dobri:#data.keys():
+    maxi=None
+    maxi_mat=[]
+    maxi_pr=[]
     for s in seznam:
         print d, len(s), len(data[d]) 
-        racunaj(s, data[d])
+        mat,pr,m = racunaj(s, data[d])
+        if m>maxi:
+            maxi=m
+            maxi_mat=mat
+            maxi_pr=pr
+    
+izpisi(seznam[2],data[d],maxi_mat,maxi_pr,m)
+            
+        
+    
 
-print seznam[2][8139:8215]
+print seznam[2][8139:8239]
 ##        for i in range(len(seq_r)):
 ##            racunaj(seq_r[i],data[d])
 
