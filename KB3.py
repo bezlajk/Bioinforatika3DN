@@ -136,20 +136,6 @@ def align_nw(s, t, delta, gap_p=-1):
                 (M[i-1][j-1] + delta[(s[i-1], t[j-1])], (i-1, j-1)))
     return M, pred
 
-#=============================================================================
-def align_sw(s, t, delta, gap_p=-1):
-    Ma = [[0]*(len(t)+1) for i in range(len(s)+1)]
-    pred = [[(0,0)]*(len(t)+1) for i in range(len(s)+1)]
-
-    for i in range(1, len(s)+1):
-        for j in range(1, len(t)+1):
-            Ma[i][j], pred[i][j] = \
-                max((Ma[i-1][j] + gap_p, (i-1, j)),
-                (Ma[i][j-1] + gap_p, (i, j-1)),
-                (Ma[i-1][j-1] + delta[(s[i-1], t[j-1])], (i-1, j-1)),
-                (0, (0,0)))
-    return Ma, pred
-
 def traceback_nw(s, t, pred):
     walk = [(len(s), len(t))]
     prev_i, prev_j = walk[-1]
@@ -159,6 +145,21 @@ def traceback_nw(s, t, pred):
     walk.reverse()
     return walk
 
+#=============================================================================
+def align_sw(s, t, delta, gap_p=-1):
+    M = [[0]*(len(t)+1) for i in range(len(s)+1)]
+    pred = [[(0,0)]*(len(t)+1) for i in range(len(s)+1)]
+
+    for i in range(1, len(s)+1):
+        for j in range(1, len(t)+1):
+            M[i][j], pred[i][j] = \
+                max((M[i-1][j] + gap_p, (i-1, j)),
+                (M[i][j-1] + gap_p, (i, j-1)),
+                (M[i-1][j-1] + delta[(s[i-1], t[j-1])], (i-1, j-1)),
+                (0, (0,0)))
+    return M, pred
+
+
 def traceback_sw(s, t, pred, mat, zac_celica=None):
     walk = [zac_celica]
     prev_i, prev_j = walk[-1]
@@ -167,9 +168,10 @@ def traceback_sw(s, t, pred, mat, zac_celica=None):
         if mat[prev_i][prev_j] == 0:
             break
         walk.append((prev_i, prev_j))
+    print prev_i, prev_j, 'zadnji i in j', len(walk)
     walk.reverse()
     return walk
-
+#======================================================================
 def pp_alignment(s, t, walk):
     def pp(indx, n):
         ret = []
@@ -215,7 +217,6 @@ def racunaj(s,t):
 #________________________________________________
     print "local alignment"
     mat, pr = align_sw(s, t, delta_book) #blosum50)
-    print len(mat), mat[30]
     loc_score = max(max(r) for r in mat)
     print "score (of the best) local alignment:", loc_score
 
@@ -240,6 +241,7 @@ for d in dobri:#data.keys():
         print d, len(s), len(data[d]) 
         racunaj(s, data[d])
 
+print seznam[2][8139:8215]
 ##        for i in range(len(seq_r)):
 ##            racunaj(seq_r[i],data[d])
 
