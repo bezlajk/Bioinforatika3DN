@@ -215,6 +215,7 @@ def racunaj(s,t):
 #________________________________________________
     print "local alignment"
     mat, pr = align_sw(s, t, delta_book) #blosum50)
+    print len(mat), mat[30]
     loc_score = max(max(r) for r in mat)
     print "score (of the best) local alignment:", loc_score
 
