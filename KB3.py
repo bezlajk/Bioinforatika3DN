@@ -67,25 +67,16 @@ def ORF(s,start_codon,stop_codon):
 geni1=ORF(data1,amino[0][1:],amino[-1][1:])
 geni2=ORF(data1,amino[0][1:],amino[-1][1:])
 geni=geni1+geni2
-
-for g in geni:
-    print g
+print len(geni)
+print str(Bio.Seq.Seq(data1[geni[0][0]:geni[0][1]]).translate(table=6))
 #==========================================================================
-def pretvori(data):
-    seq =[]
-    for i in range(3):
-        data1=data[i:]
-        seq.append(str(Bio.Seq.Seq(data1).translate(table=6)))
-    return seq
-
 seznam=[]
+kb=0
 for g in geni:
-    gen=data1[g[0],g[1]]
-    seq=pretvori(gen)
+    gen=data1[g[0]:g[1]]
+    seznam.append(str(Bio.Seq.Seq(gen).translate(table=6)))
 
-print seznam[:3]
-
-
+print seznam[0]
 #==========================================================================
 
 def read_table(fname):
@@ -130,17 +121,17 @@ def align_nw(s, t, delta, gap_p=-1):
 
 #=============================================================================
 def align_sw(s, t, delta, gap_p=-1):
-    M = [[0]*(len(t)+1) for i in range(len(s)+1)]
+    Ma = [[0]*(len(t)+1) for i in range(len(s)+1)]
     pred = [[(0,0)]*(len(t)+1) for i in range(len(s)+1)]
 
     for i in range(1, len(s)+1):
         for j in range(1, len(t)+1):
-            M[i][j], pred[i][j] = \
-                max((M[i-1][j] + gap_p, (i-1, j)),
-                (M[i][j-1] + gap_p, (i, j-1)),
-                (M[i-1][j-1] + delta[(s[i-1], t[j-1])], (i-1, j-1)),
+            Ma[i][j], pred[i][j] = \
+                max((Ma[i-1][j] + gap_p, (i-1, j)),
+                (Ma[i][j-1] + gap_p, (i, j-1)),
+                (Ma[i-1][j-1] + delta[(s[i-1], t[j-1])], (i-1, j-1)),
                 (0, (0,0)))
-    return M, pred
+    return Ma, pred
 
 def traceback_nw(s, t, pred):
     walk = [(len(s), len(t))]
@@ -213,26 +204,26 @@ def racunaj(s,t):
     print
 
     
-    for i, r in enumerate(mat):
-        if loc_score in r:
-            j = r.index(loc_score)
-            print "possible local alignment with score:", mat[i][j]
-            w = traceback_sw(s, t, pr, mat, (i, j))
-            pp_alignment(s, t, w)
-            print
-
-        
+##    for i, r in enumerate(mat):
+##        if loc_score in r:
+##            j = r.index(loc_score)
+##            print "possible local alignment with score:", mat[i][j]
+##            w = traceback_sw(s, t, pr, mat, (i, j))
+##            pp_alignment(s, t, w)
+##            print
+##
+##        
 
 ##for i in range(len(seq)):
 ##        racunaj(seq[i])
 dobri=["C01"]#,"C03","C05","C08","C25","C36","C29"]
 for d in dobri:#data.keys():
-    for i in range(len(seq)):
-        print d, i, len(data[d]) 
-        racunaj(seq[i], data[d])
+    for s in seznam:
+        print d, len(s), len(data[d]) 
+        racunaj(s, data[d])
 
-    for i in range(len(seq_r)):
-        racunaj(seq_r[i],data[d])
+##        for i in range(len(seq_r)):
+##            racunaj(seq_r[i],data[d])
 
 
     
