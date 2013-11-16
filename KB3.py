@@ -195,7 +195,7 @@ def pp_alignment(s, t, walk):
     print pt
     
 #=============================================================================
-def racunaj_globalno(s,t):
+def racunaj_globalno(s,t,risi):
 ##    s = 'VIVALASVEGAS'
 ##    t = 'VIVADAVIS'
 ##    s=seq
@@ -210,9 +210,9 @@ def racunaj_globalno(s,t):
 
     w = traceback_nw(s, t, pr)
     print "score of the global alignment:", mat[-1][-1]
-
-    pp_alignment(s, t, w)
-    print
+    if risi==1:
+        pp_alignment(s, t, w)
+    return mat[-1][-1]
 
 #________________________________________________
 
@@ -236,23 +236,62 @@ def izpisi(s,t,mat,pr,loc_score):
 
 #=========================================================================      
 
-def poisci_start(s,t,z,w,geni):
-    a=None
-    stev=0
-    while True:
-        if geni[stev][0]>z:
-            break
-        stev+=1
+##def poisci_start(s,t,z,w,geni):
+##    a=None
+##    stev=0
+##    while True:
+##        if geni[stev][0]>z:
+##            break
+##        stev+=1
 ##    for g in geni:
 ##        print g
-    for g in geni:
-        racunaj_globalno(g[1],t)
-    #izpisi(sez2,t,mat2,pr2,m2)
+##    for g in geni:
+##        mat2,pr2,m2=racunaj_lokalno(g[1],t)
+##        izpisi(g[1],t,mat2,pr2,m2)
+##    
+def poisci_start(s,t,z,w):
+    maxcena=None
+    mesto=0
+    mesto_o=0
+    i=z
+    j=z
+    k=z+w
+    while s[k]!='*':
+        k+=1
+    while True:
+        j-=1
+        if s[j]=='M':
+            cena=racunaj_globalno(s[j:k],t,0)
+            if maxcena<cena:
+                print 'tuki\n'
+                maxcena=cena
+                mesto=j
+            else: break
+    print 'mesto zaèetka:', mesto, 'mesto konca:', k
+    racunaj_globalno(s[mesto:k],t,1)
+    while True:
+        if i<k:
+            i+=1
+            if s[i]=='M':
+                cena=racunaj_globalno(s[i:k],t,0)
+                if maxcena<cena:
+                    print 'tuki\n'
+                    maxcena=cena
+                    mesto_o=i
+                else: break
+        else:
+            mesto_o=None
+            break
+    if mesto_o!=None:
+        print 'mesto zaèetka:', mesto_o, 'mesto konca:', k
+        racunaj_globalno(s[mesto_o:k],t,1)
+             
+    
     
     
 #=========================================================================
 
-#print seznam[0][23923/3-1:24115/3]
+print seznam[2][7974:8220]
 
 dobri=["C01"]#,"C03","C05","C08","C25","C36","C29"]
 for d in dobri:#data.keys():
@@ -272,7 +311,7 @@ for d in dobri:#data.keys():
         
     z, w = izpisi(maxi_s,data[d],maxi_mat,maxi_pr,maxi)
     print
-    poisci_start(maxi_s,data[d],z,w,Geni[maxi_i])
+    poisci_start(maxi_s,data[d],z,w)#,Geni[maxi_i])
 
 
 
