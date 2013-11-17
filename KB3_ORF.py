@@ -203,7 +203,7 @@ def racunaj_globalno(s,t,risi):
     #print "TIME", time.time() - t1
 
     w = traceback_nw(s, t, pr)
-    #print "score of the global alignment:", mat[-1][-1]
+    print "score of the global alignment:", mat[-1][-1]
     if risi==1:
         pp_alignment(s, t, w)
     return mat[-1][-1]
@@ -212,7 +212,7 @@ def racunaj_globalno(s,t,risi):
 
 def racunaj_lokalno(s,t):
     #print "local alignment"
-    mat, pr = align_sw(s, t, delta_book) #blosum50)
+    mat, pr = align_sw(s, t, delta_book,-2) #blosum50)
     loc_score = max(max(r) for r in mat)
     #print "score (of the best) local alignment:", loc_score
     return mat, pr, loc_score
@@ -223,7 +223,7 @@ def izpisi(s,t,mat,pr,loc_score,risi):
             j = r.index(loc_score)
             w, z, zt = traceback_sw(s, t, pr, mat, (i, j))
             #print "possible local alignment with score:", mat[i][j]
-    #print "zaèetek sekvence je na mestu: ", z, "dolžina sekvence pa je: ", len(w)
+    print "zaèetek sekvence je na mestu: ", z, "dolžina sekvence pa je: ", len(w)
 
     if risi==1:
         pp_alignment(s, t, w)
@@ -232,12 +232,14 @@ def izpisi(s,t,mat,pr,loc_score,risi):
 #=========================================================================      
 def poisci_start(s,t,z,w,zt):
     maxcena=None
+    maxcena_o=None
     mesto=0
     mesto_o=None
     i=z
     j=z
     k=z+w
     M=True
+    q=0
     while True:
         if s[k]!='*':
             k+=1
@@ -249,14 +251,17 @@ def poisci_start(s,t,z,w,zt):
             if maxcena<cena:
                 maxcena=cena
                 mesto=j
+                q+=1
+            elif q>1:
+                break
             else: break
     #print '\n Globalno:'
     #print 'mesto zaèetka:', mesto, 'mesto konca:', k, 'cena:', maxcena
     #dobimo potencaialni celi gen
-    racunaj_globalno(s[mesto:k],t,1)
+    racunaj_globalno(s[mesto:k],t,0)
+    introni(s[mesto:z],t[:zt])
+    introni(s[z+w:k],t[k:])
     
-    mat,pr,m = racunaj_lokalno(s[mesto:z]+s[z+w:k],t[:zt]+t[:zt+w])
-
     print 
     z1, w1, zt1 = izpisi(s[mesto:k],t,mat,pr,m,0)
     while True:
@@ -264,28 +269,43 @@ def poisci_start(s,t,z,w,zt):
             i+=1
             if s[i]=='M':
                 cena=racunaj_globalno(s[i:k],t,0)
-                if maxcena<cena:
-                    maxcena=cena
+                print cena
+                if maxcena_o<cena:
+                    maxcena_o=cena
                     mesto_o=i
-                else: break
+                    #print mesto_o,'tuki\n'
+                break
         else:
             break
     if mesto_o!=None:
-        #print 'mesto zaèetka:', mesto_o, 'mesto konca:', k
-        racunaj_globalno(s[mesto_o:k],t,1)
+        #print 'V levo mesto zaèetka:', mesto_o, 'mesto konca:', k, 'cema:', maxcena_o
+        racunaj_globalno(s[mesto_o:k],t,0)
     return mesto, k
              
     
     
     
 #=========================================================================
+
+
 def introni(s,t):
     #orf in gen
+    cena=racunaj_globalno(s,t,1)
     mat,pr,m = racunaj_lokalno(s, t)
+    z, w, zt = izpisi(s,t,mat,pr,m,1)
+##    if m>maxi or (m==maxi and w>maxi_w):
+##        maxi=m
+##        maxi_mat=mat
+##        maxi_pr=pr
+##        maxi_s=s
+##        maxi_i=i
+##        maxi_w=w
+
+    
 
 seznam_genov=[]
-#dobri=["C02"]#,"C02","C03","C05","C08","C25","C36","C29"]
-dobri=data.keys()
+dobri=["C03"]#,"C02","C03","C05","C08","C25","C36","C29"]
+#dobri=data.keys()
 for d in dobri:
     #print '\n Analiza gena %s \n'%d
     maxi=None
@@ -312,4 +332,3 @@ for d in dobri:
 seznam_genov=sorted(seznam_genov)
 for s in seznam_genov:
     print "%s\t%d\t%d"%(s[0],s[1],s[2])
-
