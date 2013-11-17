@@ -39,20 +39,25 @@ backgroundcolor=\color{light-gray},
 
 \section{Uvod}
 
-V tem razdelku, ki naj bo kratek in naj obsega en odstavek z do 150
-besed, na kratko opišeš, kaj je bil cilj naloge.
+Naša naloga je bila v DNA sekvenci, čim bolj natančno napovedati podane gen. Da lahko primerjamo gen, ki je bil podan z aminokislinami, ter DNA, podana z nukliotidi, moramo uskladi zapis. Odločimo se, da DNA v vseh oknih prevedemo v aminokisline. Uporabili bomo alogitma Needleman–Wunsch za globalno poravnavo in Smith–Waterman za lokalno poravnavo. 
+Na koncu moramo za vsak od podanih genov vrniti, kje se nahajajo, odstaniti moramo introne.
+
 
 \section{Podatki}
 
-Če je naloga zasnovana tako, da vključuje analizo izbranih podatkov, v
-tem razdelku opišeš, kakšni so ti podatki in navedeš nekaj osnovnih
-statističnih lastnosti teh podatkov. Slednje vključujejo velikost
-podatkov (na primer število primerov, število in vrsto atributov), delež
-manjkajočih podatkov, opis in porazdelitev vrednosti ciljnih
-spremenljivk, in podobno. Če si podatke pridobil sam, tu opišeš, na
-kakšen način, kje in kako.
+Za nalogo smo potrebovali naslednje tekstovne datoteke:
+\begin{itemize}
+\item dnaC00C39.txt 
+\item dnaC40C79.txt 
+\item aminoacids.txt
+\end{itemize}
+Vse dostopne na spletni strani http://193.2.72.57/uvb2013dn3/.
+Prva datoteka je testna, na njej smo poitzkušali naš algoritem, druga pa je takorekoč odločilna, saj je rezultat naše naloge določen na podlagi rezultata, ki ga pridobimo na njej. Tretja datoteka je datoteka, v katri so shranjeni znani geni.
 
 \section{Metode}
+
+Kot že omenjeno bomo potrebovali algoritma Needleman–Wunsch za globalno poravnavo in Smith–Waterman za lokalno poravnavo. Dobili smo ju kot predlogo v datoteki  alignment.py na spletni strani https://ucilnica.fri.uni-lj.si/mod/assign/view.php?id=25573. Moja ideja je bila za vsak gen s pomočjo Smith–Watermanovega algoritma poiščem kos DNA, prevedenaga v amino kisline, kjer se nahaja najdalši kos, ki se ujema s posameznim genom. Na ta način sm dobila okvirno lokacijo gena. Geni kodirajo aminokislino, ki pa se vedno začne z "start" kodonom in konča z "kodonom". Aminokislina, ki jo kodira "star" kodon se imenuje Methionin označimo ga z "M",  "stop" kodoni ne kodirajo nobene aminokisline označimo pa jih u "*". Ker vemo kako izgleda začetek sam desno in levo od začetka odseka poiskala Methionin in od konca odseka v desno poiskala stop kodon. Na osteku med  Methioninom in stop kodonom sam nato za ustrezni gen 
+
 
 Tu opišeš, na kakšen način si rešil nalogo (tehnike in metode, ki si
 jih uporabil). Lahko vključiš tudi zanimiv del programske kode, ki
@@ -61,13 +66,13 @@ kot je na primer slika~\ref{slika1}. Vse slike in tabele, ki jih
 vključiš v poročilo, morajo biti navedene v besedilu oziroma se moraš
 na njih sklicati.
 
-\begin{figure}[htbp]
-\begin{center}
-\includegraphics[scale=0.3]{slika-primer.png}
-\caption{Vsako sliko opremi s podnapisom, ki pove, kaj slika prikazuje.}
-\label{slika1}
-\end{center}
-\end{figure}
+%\begin{figure}[htbp]
+%\begin{center}
+%\includegraphics[scale=0.3]{slika-primer.png}
+%\caption{Vsako sliko opremi s podnapisom, ki pove, kaj slika prikazuje.}
+%\label{slika1}
+%\end{center}
+%\end{figure}
 
 V to poglavje lahko tudi vključiš kakšen metodološko zanimiv del
 kode. Primer vključitve kode oziroma implementirane funkcije v
