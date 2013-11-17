@@ -146,7 +146,7 @@ def traceback_nw(s, t, pred):
     return walk
 
 #=============================================================================
-def align_sw(s, t, delta, gap_p=-1):
+def align_sw(s, t, delta, gap_p=-3):
     M = [[0]*(len(t)+1) for i in range(len(s)+1)]
     pred = [[(0,0)]*(len(t)+1) for i in range(len(s)+1)]
 
@@ -170,7 +170,7 @@ def traceback_sw(s, t, pred, mat, zac_celica=None):
             break
         walk.append((prev_i, prev_j))
     walk.reverse()
-    return walk, prev_i
+    return walk, prev_i, prev_j
 #======================================================================
 def pp_alignment(s, t, walk):
     def pp(indx, n):
@@ -220,16 +220,16 @@ def izpisi(s,t,mat,pr,loc_score,risi):
     for i, r in enumerate(mat):
         if loc_score in r:
             j = r.index(loc_score)
-            w, z = traceback_sw(s, t, pr, mat, (i, j))
+            w, z, zt = traceback_sw(s, t, pr, mat, (i, j))
             #print "possible local alignment with score:", mat[i][j]
     print "zaèetek sekvence je na mestu: ", z, "dolžina sekvence pa je: ", len(w)
 
     if risi==1:
         pp_alignment(s, t, w)
-    return z, len(w)
+    return z, len(w), zt
 
 #=========================================================================      
-def poisci_start(s,t,z,w):
+def poisci_start(s,t,z,w,zt):
     maxcena=None
     mesto=0
     mesto_o=None
@@ -247,9 +247,11 @@ def poisci_start(s,t,z,w):
                 maxcena=cena
                 mesto=j
             else: break
-    #print '\n Globalno:'
-    #print 'mesto zaèetka:', mesto, 'mesto konca:', k, 'cena:', maxcena
-    racunaj_globalno(s[mesto:k],t,0)
+    print '\n Globalno:'
+    print 'mesto zaèetka:', mesto, 'mesto konca:', k, 'cena:', maxcena
+    racunaj_globalno(s[mesto:k],t,1)
+    mat,pr,m = racunaj_lokalno(s[mesto:z]+s[z+w:k],t[:zt]+t[:zt+w])
+    z1, w1, zt1 = izpisi(s[mesto:k],t,mat,pr,m,0)
     while True:
         if i<k:
             i+=1
@@ -273,8 +275,8 @@ def poisci_start(s,t,z,w):
 
 
 seznam_genov=[]
-#dobri=["C01","C02","C03","C05","C08","C25","C36","C29"]
-dobri=data.keys()
+dobri=["C02"]#,"C02","C03","C05","C08","C25","C36","C29"]
+#dobri=data.keys()
 for d in dobri:
     #print '\n Analiza gena %s \n'%d
     maxi=None
@@ -291,9 +293,9 @@ for d in dobri:
             maxi_s=s
             maxi_i=i
         
-    z, w = izpisi(maxi_s,data[d],maxi_mat,maxi_pr,maxi,0)
-    print
-    zacetek, konec=poisci_start(maxi_s,data[d],z,w)#,Geni[maxi_i])
+    z, w, zt = izpisi(maxi_s,data[d],maxi_mat,maxi_pr,maxi,1)
+    #print
+    zacetek, konec=poisci_start(maxi_s,data[d],z,w,zt)#,Geni[maxi_i])
     seznam_genov.append([d,zacetek*3-maxi_i-3,konec*3+maxi_i])
 seznam_genov=sorted(seznam_genov)
 for s in seznam_genov:
