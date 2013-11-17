@@ -70,13 +70,14 @@ geni1=ORF(data1,amino[0][1:],amino[-1][1:])
 geni2=ORF(data1[::-1],amino[0][1:],amino[-1][1:])
 
 geni=geni1+geni2
+
 Geni=[]
 for i in range(len(geni)):
     ge=[]
     for g in geni[i]:
         ge.append([g[0]/3,str(Bio.Seq.Seq(data1[g[0]:g[1]]).translate(table=6))])
     Geni.append(ge)
-    
+print Geni
 #==========================================================================
 ##def prevedi(geni,data):
 ##    seznam=[]
@@ -293,7 +294,7 @@ def poisci_start(s,t,z,w):
 
 print seznam[2][7974:8220]
 
-dobri=["C01"]#,"C03","C05","C08","C25","C36","C29"]
+dobri=["C01","C03","C05","C08","C25","C36","C29"]
 for d in dobri:#data.keys():
     maxi=None
     maxi_mat=[]
