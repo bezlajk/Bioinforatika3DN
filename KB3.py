@@ -223,6 +223,7 @@ def izpisi(s,t,mat,pr,loc_score,risi):
             w, z = traceback_sw(s, t, pr, mat, (i, j))
             #print "possible local alignment with score:", mat[i][j]
     print "zaèetek sekvence je na mestu: ", z, "dolžina sekvence pa je: ", len(w)
+
     if risi==1:
         pp_alignment(s, t, w)
     return z, len(w)
@@ -261,7 +262,7 @@ def poisci_start(s,t,z,w):
         else:
             break
     if mesto_o!=None:
-        print 'mesto zaèetka:', mesto_o, 'mesto konca:', k
+        #print 'mesto zaèetka:', mesto_o, 'mesto konca:', k
         racunaj_globalno(s[mesto_o:k],t,0)
     return mesto, k
              
@@ -275,7 +276,7 @@ seznam_genov=[]
 #dobri=["C01","C02","C03","C05","C08","C25","C36","C29"]
 dobri=data.keys()
 for d in dobri:
-    print '\n Analiza gena %s \n'%d
+    #print '\n Analiza gena %s \n'%d
     maxi=None
     maxi_mat=[]
     maxi_pr=[]
@@ -294,7 +295,7 @@ for d in dobri:
     print
     zacetek, konec=poisci_start(maxi_s,data[d],z,w)#,Geni[maxi_i])
     seznam_genov.append([d,zacetek*3-maxi_i-3,konec*3+maxi_i])
-
+seznam_genov=sorted(seznam_genov)
 for s in seznam_genov:
-    print s
+    print "%s\t%d\t%d"%(s[0],s[1],s[2])
 
