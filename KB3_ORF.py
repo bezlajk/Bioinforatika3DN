@@ -70,6 +70,7 @@ geni1=ORF(data1,amino[0][1:],amino[-1][1:])
 geni2=ORF(data1[::-1],amino[0][1:],amino[-1][1:])
 geni=geni1+geni2
 
+#Geni so oblike trojnega seznama: Geni[] ima 6 komponent Geni[][] in gene v posamezna fremu
 Geni=[]
 for i in range(len(geni)):
     ge=[]
@@ -222,7 +223,7 @@ def izpisi(s,t,mat,pr,loc_score,risi):
             j = r.index(loc_score)
             w, z, zt = traceback_sw(s, t, pr, mat, (i, j))
             #print "possible local alignment with score:", mat[i][j]
-    print "zaèetek sekvence je na mestu: ", z, "dolžina sekvence pa je: ", len(w)
+    #print "zaèetek sekvence je na mestu: ", z, "dolžina sekvence pa je: ", len(w)
 
     if risi==1:
         pp_alignment(s, t, w)
@@ -237,8 +238,10 @@ def poisci_start(s,t,z,w,zt):
     j=z
     k=z+w
     M=True
-    while s[k]!='*':
-        k+=1
+    while True:
+        if s[k]!='*':
+            k+=1
+        else :break
     while True:
         j-=1
         if s[j]=='M':
@@ -247,10 +250,14 @@ def poisci_start(s,t,z,w,zt):
                 maxcena=cena
                 mesto=j
             else: break
-    print '\n Globalno:'
-    print 'mesto zaèetka:', mesto, 'mesto konca:', k, 'cena:', maxcena
+    #print '\n Globalno:'
+    #print 'mesto zaèetka:', mesto, 'mesto konca:', k, 'cena:', maxcena
+    #dobimo potencaialni celi gen
     racunaj_globalno(s[mesto:k],t,1)
+    
     mat,pr,m = racunaj_lokalno(s[mesto:z]+s[z+w:k],t[:zt]+t[:zt+w])
+
+    print 
     z1, w1, zt1 = izpisi(s[mesto:k],t,mat,pr,m,0)
     while True:
         if i<k:
@@ -265,34 +272,38 @@ def poisci_start(s,t,z,w,zt):
             break
     if mesto_o!=None:
         #print 'mesto zaèetka:', mesto_o, 'mesto konca:', k
-        racunaj_globalno(s[mesto_o:k],t,0)
+        racunaj_globalno(s[mesto_o:k],t,1)
     return mesto, k
              
     
     
     
 #=========================================================================
-
+def introni(s,t):
+    #orf in gen
+    mat,pr,m = racunaj_lokalno(s, t)
 
 seznam_genov=[]
-dobri=["C02"]#,"C02","C03","C05","C08","C25","C36","C29"]
-#dobri=data.keys()
+#dobri=["C02"]#,"C02","C03","C05","C08","C25","C36","C29"]
+dobri=data.keys()
 for d in dobri:
     #print '\n Analiza gena %s \n'%d
     maxi=None
     maxi_mat=[]
     maxi_pr=[]
     maxi_s=[]
+    maxi_w=None
     for i, s in enumerate(seznam):
         #print d, i, len(data[d]) 
         mat,pr,m = racunaj_lokalno(s, data[d])
-        z, w, zt = izpisi(s,data[d],mat,pr,m,1)
-        if m>maxi:
+        z, w, zt = izpisi(s,data[d],mat,pr,m,0)
+        if m>maxi or (m==maxi and w>maxi_w):
             maxi=m
             maxi_mat=mat
             maxi_pr=pr
             maxi_s=s
             maxi_i=i
+            maxi_w=w
         
     z, w, zt = izpisi(maxi_s,data[d],maxi_mat,maxi_pr,maxi,1)
     #print
