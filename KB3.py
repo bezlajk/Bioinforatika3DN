@@ -196,13 +196,6 @@ def pp_alignment(s, t, walk):
     
 #=============================================================================
 def racunaj_globalno(s,t,risi):
-##    s = 'VIVALASVEGAS'
-##    t = 'VIVADAVIS'
-##    s=seq
-##    t=data["C01"]
-##    print 's:', s,
-##    print 't:', t
-##    print
     import time
     t1 = time.time()
     mat, pr = align_nw(s, t, blosum50)
@@ -235,20 +228,6 @@ def izpisi(s,t,mat,pr,loc_score,risi):
     return z, len(w)
 
 #=========================================================================      
-
-##def poisci_start(s,t,z,w,geni):
-##    a=None
-##    stev=0
-##    while True:
-##        if geni[stev][0]>z:
-##            break
-##        stev+=1
-##    for g in geni:
-##        print g
-##    for g in geni:
-##        mat2,pr2,m2=racunaj_lokalno(g[1],t)
-##        izpisi(g[1],t,mat2,pr2,m2)
-##    
 def poisci_start(s,t,z,w):
     maxcena=None
     mesto=0
@@ -267,8 +246,8 @@ def poisci_start(s,t,z,w):
                 maxcena=cena
                 mesto=j
             else: break
-    print '\n Globalno:'
-    print 'mesto zaèetka:', mesto, 'mesto konca:', k
+    #print '\n Globalno:'
+    #print 'mesto zaèetka:', mesto, 'mesto konca:', k, 'cena:', maxcena
     racunaj_globalno(s[mesto:k],t,0)
     while True:
         if i<k:
@@ -293,8 +272,9 @@ def poisci_start(s,t,z,w):
 
 
 seznam_genov=[]
-dobri=["C01","C02","C03","C05","C08","C25","C36","C29"]
-for d in dobri:#data.keys():
+#dobri=["C01","C02","C03","C05","C08","C25","C36","C29"]
+dobri=data.keys()
+for d in dobri:
     print '\n Analiza gena %s \n'%d
     maxi=None
     maxi_mat=[]
