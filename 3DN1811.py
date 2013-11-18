@@ -56,13 +56,12 @@ def prevedi(data):
     for i in range(3):
         seznam.append(str(Bio.Seq.Seq(data[i:]).translate(table=6)))
     return seznam
-        
-seznam=prevedi(data1)+prevedi(data1[::-1])
+
+data1_rc=str(Bio.Seq.Seq(data1).reverse_complement())   
+seznam=prevedi(data1)+prevedi(data1_rc)
 ##seznam = prevedi(geni1,data1)+prevedi(geni2,data1[::-1])
 ##print seznam[0]
 #==========================================================================
-
-#=========================================================================
 def read_table(fname):
     d = {}
     # key: (a1, a2), value: "penalty" score
@@ -134,7 +133,7 @@ def traceback_sw(s, t, pred, mat, zac_celica=None):
             break
         walk.append((prev_i, prev_j))
     walk.reverse()
-    return walk,prev_i, prev_j
+    return walk, prev_i
 
 def pp_alignment(s, t, walk):
     def pp(indx, n):
@@ -171,9 +170,9 @@ def racunaj_globalno(s,t,risi):
         pp_alignment(s, t, w)
     return mat[-1][-1]
 #==============================================================================
-def racunaj_lokalno(s,t):
+def racunaj_lokalno(s,t,koef):
     #print "local alignment"
-    mat, pr = align_sw(s, t, blosum50,-15)
+    mat, pr = align_sw(s, t, blosum50,koef)
     loc_score = max(max(r) for r in mat)
     #print "score (of the best) local alignment:", loc_score
     return mat, pr, loc_score
@@ -182,18 +181,18 @@ def izpisi(s,t,mat,pr,loc_score,risi):
     for i, r in enumerate(mat):
         if loc_score in r:
             j = r.index(loc_score)
-            w, z, zt = traceback_sw(s, t, pr, mat, (i, j))
+            w, z = traceback_sw(s, t, pr, mat, (i, j))
             #print "possible local alignment with score:", mat[i][j]
-    print "zaèetek sekvence je na mestu: ", z, "dolžina sekvence pa je: ", len(w)
-    print "\n",j
+    #print "zaèetek sekvence je na mestu: ", z, "dolžina sekvence pa je: ", len(w)
+    #print "\n",j
     if risi==1:
         pp_alignment(s, t, w)
-    return z, len(w), zt
+    return z, len(w)
 
 #==============================================================================
 seznam_la=[]
 dobri=data.keys()
-dobri=['C02']
+#dobri=['C01']
 for d in dobri:
     #print '\n Analiza gena %s \n'%d
     maxi=None
@@ -202,11 +201,10 @@ for d in dobri:
     maxi_s=[]
     maxi_w=0
 
-    
     for i, s in enumerate(seznam):
         #print d, i, len(data[d]) 
-        mat,pr,m = racunaj_lokalno(s, data[d])
-        z, w, zt = izpisi(s,data[d],mat,pr,m,0)
+        mat,pr,m = racunaj_lokalno(s, data[d],-30)
+        z, w= izpisi(s,data[d],mat,pr,m,0)
         if m>maxi or (maxi==m and w>maxi_w):
             maxi=m
             maxi_mat=mat
@@ -214,11 +212,12 @@ for d in dobri:
             maxi_s=s
             maxi_i=i
             maxi_w=w
-    z, w, zt = izpisi(maxi_s,data[d],maxi_mat,maxi_pr,maxi,1)
+    z, w= izpisi(maxi_s,data[d],maxi_mat,maxi_pr,maxi,1)
+    
     seznam_la.append([d,z,w])
 
 for i in seznam_la:
-    print i
+    print "%s\t%d\t\%s"
     
     
 
