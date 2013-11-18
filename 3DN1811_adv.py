@@ -183,16 +183,31 @@ def izpisi(s,t,mat,pr,loc_score,risi):
             j = r.index(loc_score)
             w, z = traceback_sw(s, t, pr, mat, (i, j))
             #print "possible local alignment with score:", mat[i][j]
-    #print "zaèetek sekvence je na mestu: ", z, "dolžina sekvence pa je: ", len(w)
+    print "zaèetek sekvence je na mestu: ", z, "dolžina sekvence pa je: ", len(w)
     #print "\n",j
     if risi==1:
         pp_alignment(s, t, w)
     return z, len(w)
 
 #==============================================================================
+##def rekurzija(s,t,d):
+##    if d==0:break
+##    else:
+##        mat,pr,m = racunaj_lokalno(s, data[d],-30)
+##        z, l= izpisi(s,data[d],mat,pr,m,0)
+##        if m>maxi or (maxi==m and l>maxi_l):
+##            maxi=m
+##            maxi_mat=mat
+##            maxi_pr=pr
+##            maxi_s=s
+##            maxi_i=i
+##            maxi_l=l
+##        rekurzija(s[])
+#==============================================================================
+
 seznam_la=[]
-dobri=data.keys()
-#dobri=['C01']
+#dobri=data.keys()
+dobri=['C01']
 for d in dobri:
     #print '\n Analiza gena %s \n'%d
     maxi=None
@@ -202,7 +217,7 @@ for d in dobri:
     maxi_l=0
     for i, s in enumerate(seznam):
         #print d, i, len(data[d]) 
-        mat,pr,m = racunaj_lokalno(s, data[d],-50)
+        mat,pr,m = racunaj_lokalno(s, data[d],-30)
         z, l= izpisi(s,data[d],mat,pr,m,0)
         if m>maxi or (maxi==m and l>maxi_l):
             maxi=m
@@ -211,11 +226,74 @@ for d in dobri:
             maxi_s=s
             maxi_i=i
             maxi_l=l
-    z, l= izpisi(maxi_s,data[d],maxi_mat,maxi_pr,maxi,0)
-      
+    z, l= izpisi(maxi_s,data[d],maxi_mat,maxi_pr,maxi,1)
+    dolzina_gena=len(data[d])
+    print dolzina_gena 
+    dolzina_najdbe=0
+    k=-30
+    z=z-dolzina_gena
+    l=z+l+dolzina_gena
+    mat1,pr1,m1=racunaj_lokalno(s[z:l],data[d],k)
+    if m>maxi or (maxi==m and l>maxi_l):
+            maxi=m
+            maxi_mat=mat
+            maxi_pr=pr
+            maxi_s=s
+            maxi_i=i
+            maxi_l=l
+    z1, l1= izpisi(s[z:l],data[d],maxi_mat,maxi_pr,maxi,1)
+    
+    while dolzina_najdbe<0.1*dolzina_gena:
+        k-=5
+        z1, l1= izpisi(s[z:z1]+s[l1:l],data[d],maxi_mat,maxi_pr,maxi,1)
+        mat1,pr1,m1=racunaj_lokalno(s[z:z1]+s[l1:l],data[d],k)
+        if m>maxi or (maxi==m and l>maxi_l):
+            maxi=m
+            maxi_mat=mat
+            maxi_pr=pr
+            maxi_s=s
+            maxi_i=i
+            maxi_l=l
+        dolzina_najdbe=(z-z1)+(l1-l)
+        
     
     seznam_la.append([d,z*3+maxi_i,(z+l)*3+maxi_i])
 
-print seznam_la
 for sez in seznam_la:
-    print "%s\t%d\t%s"%(sez[0],sez[1],sez[2])  
+    print "%s\t%d\t\%s"%(i[0],i[1],i[2])
+    
+    
+
+##if __name__ == "__main__":
+##    s = 'VIVALASVEGAS'
+##    t = 'VIVADAVIS'
+##    print 's:', s,
+##    print 't:', t
+##    print
+##    import time
+##    t1 = time.time()
+##    mat, pr = align_nw(s, t, blosum50)
+##    print "TIME", time.time() - t1
+##
+##    w = traceback_nw(s, t, pr)
+##    print "score of the global alignment:", mat[-1][-1]
+##
+##    pp_alignment(s, t, w)
+##    print
+##
+##
+##    print "local alignment"
+##    mat, pr = align_sw(s, t, delta_book) #blosum50)
+##    loc_score = max(max(r) for r in mat)
+##    print "score (of the best) local alignment:", loc_score
+##
+##    print
+##
+##
+##    for i, r in enumerate(mat):
+##        if loc_score in r:
+##            j = r.index(loc_score)
+##            print "possible local alignment with score:", mat[i][j]
+##            w = traceback_sw(s, t, pr, mat, (i, j))
+##            pp_alignment(s, t, w)
+##            print
