@@ -35,8 +35,8 @@ def read(ime, m):
         return slovar
     else:
         for r in fc:
-            s=r.split(",")
-            matrika.append(s)
+           s=r.split(",")
+           matrika.append(s)
         return matrika
         
 
@@ -231,7 +231,6 @@ def izpisi(s,t,mat,pr,loc_score,risi):
 #=========================================================================      
 def poisci_start(s,t,z,w,zt):
     maxcena=None
-    maxcena1=None
     mesto=0
     mesto_o=None
     i=z
@@ -244,17 +243,15 @@ def poisci_start(s,t,z,w,zt):
         j-=1
         if s[j]=='M':
             cena=racunaj_globalno(s[j:k],t,0)
-            if maxcena1<cena:
-                maxcena1=cena
+            if maxcena<cena:
+                maxcena=cena
                 mesto=j
-            else:
-                break
-    
+            else: break
     #print '\n Globalno:'
     #print 'mesto zaèetka:', mesto, 'mesto konca:', k, 'cena:', maxcena
-    racunaj_globalno(s[mesto:k],t,0)
-    #mat,pr,m = racunaj_lokalno(s[mesto:z]+s[z+w:k],t[:zt]+t[:zt+w])
-    #z1, w1, zt1 = izpisi(s[mesto:k],t,mat,pr,m,0)
+    racunaj_globalno(s[mesto:k],t,1)
+    mat,pr,m = racunaj_lokalno(s[mesto:z]+s[z+w:k],t[:zt]+t[:zt+w])
+    z1, w1, zt1 = izpisi(s[mesto:k],t,mat,pr,m,0)
     while True:
         if i<k:
             i+=1
@@ -266,9 +263,9 @@ def poisci_start(s,t,z,w,zt):
                 else: break
         else:
             break
-##    if mesto_o!=None:
-##        #print 'mesto zaèetka:', mesto_o, 'mesto konca:', k
-##        racunaj_globalno(s[mesto_o:k],t,0)
+    if mesto_o!=None:
+        #print 'mesto zaèetka:', mesto_o, 'mesto konca:', k
+        racunaj_globalno(s[mesto_o:k],t,0)
     return mesto, k
              
     
@@ -278,7 +275,7 @@ def poisci_start(s,t,z,w,zt):
 
 
 seznam_genov=[]
-#dobri=["C01"]#,"C02","C03","C05","C08","C25","C36","C29"]
+#dobri=["C02"]#,"C02","C03","C05","C08","C25","C36","C29"]
 dobri=data.keys()
 for d in dobri:
     #print '\n Analiza gena %s \n'%d
@@ -286,24 +283,22 @@ for d in dobri:
     maxi_mat=[]
     maxi_pr=[]
     maxi_s=[]
-    maxi_w=0
     for i, s in enumerate(seznam):
         #print d, i, len(data[d]) 
         mat,pr,m = racunaj_lokalno(s, data[d])
         z, w, zt = izpisi(s,data[d],mat,pr,m,0)
-        if m>maxi or (maxi==m and w>maxi_w):
+        if m>maxi:
             maxi=m
             maxi_mat=mat
             maxi_pr=pr
             maxi_s=s
             maxi_i=i
             maxi_w=w
-        
+
     z, w, zt = izpisi(maxi_s,data[d],maxi_mat,maxi_pr,maxi,1)
     #print
     zacetek, konec=poisci_start(maxi_s,data[d],z,w,zt)#,Geni[maxi_i])
     seznam_genov.append([d,zacetek*3-maxi_i-3,konec*3+maxi_i])
 seznam_genov=sorted(seznam_genov)
 for s in seznam_genov:
-    print "%s\t%d\t%d"%(s[0],s[1],s[2])
-
+    print "%s\t%d\t%d"%(s[0],s[1],s[2])            
