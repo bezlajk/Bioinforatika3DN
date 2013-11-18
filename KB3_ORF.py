@@ -44,39 +44,115 @@ data=read("aminoacids0-39.txt",'d')
 amino=read("amino_file.txt",'a')
 
 
-#==========================================================================
-#ORF
-def codon_walk(s, frame=0):
-    for ix in range(frame, len(s), 3):
-        yield ix, s[ix:ix+3]
+###==========================================================================
+###ORF
+##def codon_walk(s, frame=0):
+##    for ix in range(frame, len(s), 3):
+##        yield ix, s[ix:ix+3]
+##
+##
+##def ORF(s,start_codon,stop_codon):             
+##    genes=[]
+##    geni=[]
+##    for frame in range(3):
+##        startP=None
+##        codon_f=codon_walk(s, frame)
+##        for st, codon in codon_f:
+##            if codon in start_codon and startP==None:
+##                startP=st
+##            if codon in stop_codon and startP!=None:
+##                genes.append((startP,st))
+##                startP=None
+##        geni.append(genes)
+##    return geni
+##
+##geni1=ORF(data1,amino[0][1:],amino[-1][1:])
+##geni2=ORF(data1[::-1],amino[0][1:],amino[-1][1:])
+##geni=geni1+geni2
+##
+###Geni so oblike trojnega seznama: Geni[] ima 6 komponent Geni[][] in gene v posamezna fremu
+##Geni=[]
+##for i in range(len(geni)):
+##    ge=[]
+##    for g in geni[i]:
+##        ge.append([g[0]/3,str(Bio.Seq.Seq(data1[g[0]:g[1]]).translate(table=6))])
+##    Geni.append(ge)
+#===============================================================================
+start_i="GT"
+stop_i="AG"
 
+def kombiniraj(sez):
+    sez1=[]
+    for i,j in sez:
+        for k,l in sez:
+            if i<l:
+                sez1.append((i,l))
+            else:
+                sez1.append((l,i))
+    return sez1
+            
+def findIntron(seq,start_i,stop_i,start_codon,stop_codon):
+    output=[]
+    gen_start=[]
+    intron=[]
+    istart=[]
+    stop=None
+    for i,a in enumerate(seq):
+        if seq[i:i+3] in start_codon and len(gen_start)<4 and intron==[]:
+            #našli smo start kodon, lahko je prvi ali pa tudi ne
+            if gen_start==[]:
+                gen_start.append((i%3,i))
+            else:
+                frame=[f for f,_ in gen_start]
+                if i%3 not in frame:
+                    gen_start.append((i%3,i))
 
-def ORF(s,start_codon,stop_codon):             
-    genes=[]
-    geni=[]
-    for frame in range(3):
-        startP=None
-        codon_f=codon_walk(s, frame)
-        for st, codon in codon_f:
-            if codon in start_codon and startP==None:
-                startP=st
-            if codon in stop_codon and startP!=None:
-                genes.append((startP,st))
-                startP=None
-        geni.append(genes)
-    return geni
+        if seq[i:i+2] in start_i and len(istart)<4:
+            #našli smo kandidata za intron
+            if gen_start!=[] and istart==[]:
+                istart.append((i%3,i))
+            
+            elif gen_start!=[] and istart!=[]:  
+                frame_i=[f for f,_ in gen_start]
+                if i%3 not in frame_i:
+                    istart.append((i%3,i))
+                       
+        if seq[i:i+2] in stop_i:
+            #našli smo konec introna
+            [intron.append((j,i)) for _,j in istart ]
+            istart=[]
+                
+        if seq[i:i+3] in stop_codon and gen_start!=[] and istart==[]:
+            if intron!=[]:
+                introni=kombiniraj(intron)
+                for _,l in gen_start:
+                    for j,k in introni:
+                        d=(j-l)+(i-k)
+                        if d%3==0 and d<10*3:
+                            output.append((l,j+3))
+                            output.append((k,i+3))
+                    if (l-i)%3==0:
+                        output.append((l,i))
+                    elif stop==1:
+                        break
+                intron=[]
+            else:
+                for _,j in sorted(gen_start):
+                    if (j-i)%3==0:
+                        output.append((j,i))
+                        gen_start=[]
+                intron=[]
+    return output   
 
-geni1=ORF(data1,amino[0][1:],amino[-1][1:])
-geni2=ORF(data1[::-1],amino[0][1:],amino[-1][1:])
-geni=geni1+geni2
+neki=findIntron(data1,start_i,stop_i,amino[0][1:],amino[-1][1:])
+neki1=findIntron(data1[::-1],start_i,stop_i,amino[0][1:],amino[-1][1:])
+print "============================================================"
+geni=sorted(set(neki)|set(neki1))
 
 #Geni so oblike trojnega seznama: Geni[] ima 6 komponent Geni[][] in gene v posamezna fremu
 Geni=[]
-for i in range(len(geni)):
-    ge=[]
-    for g in geni[i]:
-        ge.append([g[0]/3,str(Bio.Seq.Seq(data1[g[0]:g[1]]).translate(table=6))])
-    Geni.append(ge)
+for g in geni:
+    Geni.append((g[0],g[1],str(Bio.Seq.Seq(data1[g[0]:g[1]]).translate(table=6))))
 
 #==========================================================================
 ##def prevedi(geni,data):
@@ -203,8 +279,9 @@ def racunaj_globalno(s,t,risi):
     #print "TIME", time.time() - t1
 
     w = traceback_nw(s, t, pr)
-    print "score of the global alignment:", mat[-1][-1]
+    #print "score of the global alignment:", mat[-1][-1]
     if risi==1:
+        print "\n\n score of the global alignment:", mat[-1][-1]
         pp_alignment(s, t, w)
     return mat[-1][-1]
 
@@ -223,64 +300,36 @@ def izpisi(s,t,mat,pr,loc_score,risi):
             j = r.index(loc_score)
             w, z, zt = traceback_sw(s, t, pr, mat, (i, j))
             #print "possible local alignment with score:", mat[i][j]
-    print "zaèetek sekvence je na mestu: ", z, "dolžina sekvence pa je: ", len(w)
+    #print "zaèetek sekvence je na mestu: ", z, "dolžina sekvence pa je: ", len(w)
 
     if risi==1:
+        print "\n\n zaèetek sekvence je na mestu: ", z, "dolžina sekvence pa je: ", len(w)
         pp_alignment(s, t, w)
     return z, len(w), zt
 
 #=========================================================================      
-def poisci_start(s,t,z,w,zt):
+def poisci_start(s,t,z,w,zt,maxi):
     maxcena=None
     maxcena_o=None
-    mesto=0
+    mesto=[]
     mesto_o=None
-    i=z
-    j=z
-    k=z+w
-    M=True
-    q=0
-    while True:
-        if s[k]!='*':
-            k+=1
-        else :break
-    while True:
-        j-=1
-        if s[j]=='M':
-            cena=racunaj_globalno(s[j:k],t,0)
-            if maxcena<cena:
-                maxcena=cena
-                mesto=j
-                q+=1
-            elif q>1:
-                break
-            else: break
+    
+    for ii in range(len(Geni)):
+        po=ii
+        if Geni[ii][0]>z:break
+    kandidati=Geni[ii-10:ii+10]
+    for k in kandidati:
+        cena=racunaj_globalno(k[2],t,0)
+        if cena>maxi:
+            mesto.append(k) #zanimajo nas lokacije
+                
     #print '\n Globalno:'
     #print 'mesto zaèetka:', mesto, 'mesto konca:', k, 'cena:', maxcena
     #dobimo potencaialni celi gen
-    racunaj_globalno(s[mesto:k],t,0)
-    introni(s[mesto:z],t[:zt])
-    introni(s[z+w:k],t[k:])
-    
-    print 
-    z1, w1, zt1 = izpisi(s[mesto:k],t,mat,pr,m,0)
-    while True:
-        if i<k:
-            i+=1
-            if s[i]=='M':
-                cena=racunaj_globalno(s[i:k],t,0)
-                print cena
-                if maxcena_o<cena:
-                    maxcena_o=cena
-                    mesto_o=i
-                    #print mesto_o,'tuki\n'
-                break
-        else:
-            break
-    if mesto_o!=None:
-        #print 'V levo mesto zaèetka:', mesto_o, 'mesto konca:', k, 'cema:', maxcena_o
-        racunaj_globalno(s[mesto_o:k],t,0)
-    return mesto, k
+    for m in mesto:
+        racunaj_globalno(m[2],t,1)
+        #z1, w1, zt1 = izpisi(mesto,t,mat,pr,m,0)
+    return mesto
              
     
     
@@ -304,7 +353,7 @@ def introni(s,t):
     
 
 seznam_genov=[]
-dobri=["C03"]#,"C02","C03","C05","C08","C25","C36","C29"]
+dobri=["C01"]#,"C02","C03","C05","C08","C25","C36","C29"]
 #dobri=data.keys()
 for d in dobri:
     #print '\n Analiza gena %s \n'%d
@@ -317,18 +366,17 @@ for d in dobri:
         #print d, i, len(data[d]) 
         mat,pr,m = racunaj_lokalno(s, data[d])
         z, w, zt = izpisi(s,data[d],mat,pr,m,0)
-        if m>maxi or (m==maxi and w>maxi_w):
+        if m>maxi or (maxi==m and maxi_w<w):
             maxi=m
             maxi_mat=mat
             maxi_pr=pr
             maxi_s=s
             maxi_i=i
             maxi_w=w
-        
     z, w, zt = izpisi(maxi_s,data[d],maxi_mat,maxi_pr,maxi,1)
-    #print
-    zacetek, konec=poisci_start(maxi_s,data[d],z,w,zt)#,Geni[maxi_i])
-    seznam_genov.append([d,zacetek*3-maxi_i-3,konec*3+maxi_i])
+    pozicije=poisci_start(maxi_s,data[d],z,w,zt,maxi)#,Geni[maxi_i])
+    #seznam_genov.append([d,pozicije[:1]])
+    
 seznam_genov=sorted(seznam_genov)
-for s in seznam_genov:
-    print "%s\t%d\t%d"%(s[0],s[1],s[2])
+for s in pozicije:
+    print s[0]*3,s[1]*3
