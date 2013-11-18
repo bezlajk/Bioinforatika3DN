@@ -172,7 +172,10 @@ def racunaj_globalno(s,t,risi):
 #==============================================================================
 def racunaj_lokalno(s,t,koef):
     #print "local alignment"
-    mat, pr = align_sw(s, t, blosum50,koef)
+    if koef=='a':
+        mat, pr = align_sw(s, t, delta_book)
+    else:
+        mat, pr = align_sw(s, t, blosum50,koef)
     loc_score = max(max(r) for r in mat)
     #print "score (of the best) local alignment:", loc_score
     return mat, pr, loc_score
@@ -190,19 +193,15 @@ def izpisi(s,t,mat,pr,loc_score,risi):
     return z, len(w)
 
 #==============================================================================
-##def rekurzija(s,t,d):
+##def rekurzija(s,t,d,i):
 ##    if d==0:break
 ##    else:
 ##        mat,pr,m = racunaj_lokalno(s, data[d],-30)
 ##        z, l= izpisi(s,data[d],mat,pr,m,0)
-##        if m>maxi or (maxi==m and l>maxi_l):
-##            maxi=m
-##            maxi_mat=mat
-##            maxi_pr=pr
-##            maxi_s=s
-##            maxi_i=i
-##            maxi_l=l
-##        rekurzija(s[])
+##        d1=rekurzija(s[:z],t,d,i)
+##        d2=rekurzija(s[z+l:],t,d,i)
+##        d-d1
+##        return d
 #==============================================================================
 
 seznam_la=[]
@@ -230,31 +229,28 @@ for d in dobri:
     dolzina_gena=len(data[d])
     print dolzina_gena 
     dolzina_najdbe=0
-    k=-30
+    koef=-30
     z=z-dolzina_gena
+    z1=z+l+dolzina_gena
     l=z+l+dolzina_gena
-    mat1,pr1,m1=racunaj_lokalno(s[z:l],data[d],k)
-    if m>maxi or (maxi==m and l>maxi_l):
-            maxi=m
-            maxi_mat=mat
-            maxi_pr=pr
-            maxi_s=s
-            maxi_i=i
-            maxi_l=l
-    z1, l1= izpisi(s[z:l],data[d],maxi_mat,maxi_pr,maxi,1)
-    
+    l1=z+l+dolzina_gena
+    skvenca=s[z:k1]+s[k2:l]
     while dolzina_najdbe<0.1*dolzina_gena:
-        k-=5
-        z1, l1= izpisi(s[z:z1]+s[l1:l],data[d],maxi_mat,maxi_pr,maxi,1)
-        mat1,pr1,m1=racunaj_lokalno(s[z:z1]+s[l1:l],data[d],k)
-        if m>maxi or (maxi==m and l>maxi_l):
-            maxi=m
-            maxi_mat=mat
-            maxi_pr=pr
-            maxi_s=s
-            maxi_i=i
-            maxi_l=l
-        dolzina_najdbe=(z-z1)+(l1-l)
+        koef-=5
+        k1=z1+z
+        k2=z+z1+l1
+        if k2>l:
+            k2=l
+        if k1>l:
+            k1=l
+            
+        mat1,pr1,m1=racunaj_lokalno(seznam,data[d],koef)
+        z1, l1= izpisi(s[z:z1]+s[l1:l],data[d],mat1,pr1,m1,1)
+        dolzina_najdbe=(z1-z)+(l-(z+z1+l1))
+        if z==z1:
+            z=l1
+        if l1==l:
+            l=l1
         
     
     seznam_la.append([d,z*3+maxi_i,(z+l)*3+maxi_i])
@@ -263,37 +259,3 @@ for sez in seznam_la:
     print "%s\t%d\t\%s"%(i[0],i[1],i[2])
     
     
-
-##if __name__ == "__main__":
-##    s = 'VIVALASVEGAS'
-##    t = 'VIVADAVIS'
-##    print 's:', s,
-##    print 't:', t
-##    print
-##    import time
-##    t1 = time.time()
-##    mat, pr = align_nw(s, t, blosum50)
-##    print "TIME", time.time() - t1
-##
-##    w = traceback_nw(s, t, pr)
-##    print "score of the global alignment:", mat[-1][-1]
-##
-##    pp_alignment(s, t, w)
-##    print
-##
-##
-##    print "local alignment"
-##    mat, pr = align_sw(s, t, delta_book) #blosum50)
-##    loc_score = max(max(r) for r in mat)
-##    print "score (of the best) local alignment:", loc_score
-##
-##    print
-##
-##
-##    for i, r in enumerate(mat):
-##        if loc_score in r:
-##            j = r.index(loc_score)
-##            print "possible local alignment with score:", mat[i][j]
-##            w = traceback_sw(s, t, pr, mat, (i, j))
-##            pp_alignment(s, t, w)
-##            print
