@@ -8,6 +8,7 @@ import cPickle
 import matplotlib.pyplot as plt
 import pylab
 
+
 #==========================================================================
 def read(ime):
     """Iz datodeke ime preberi podake in jih vrni kot seznam."""
@@ -42,35 +43,6 @@ def read(ime, m):
 
 data=read("aminoacids0-39.txt",'d')
 amino=read("amino_file.txt",'a')
-
-
-#==========================================================================
-#ORF
-def codon_walk(s, frame=0):
-    for ix in range(frame, len(s), 3):
-        yield ix, s[ix:ix+3]
-
-
-def ORF(s,start_codon,stop_codon):             
-    genes=[]
-    geni=[]
-    for frame in range(3):
-        startP=None
-        codon_f=codon_walk(s, frame)
-        for st, codon in codon_f:
-            if codon in start_codon and startP==None:
-                startP=st
-            if codon in stop_codon and startP!=None:
-                if st-startP>10*3:
-                    genes.append((startP,st))
-                    startP=None
-        geni.append(genes)
-    return geni
-
-geni1=ORF(data1,amino[0][1:],amino[-1][1:])
-geni2=ORF(data1[::-1],amino[0][1:],amino[-1][1:])
-geni=geni1+geni2
-
 #==========================================================================
 ##def prevedi(geni,data):
 ##    seznam=[]
@@ -90,6 +62,7 @@ seznam=prevedi(data1)+prevedi(data1[::-1])
 ##print seznam[0]
 #==========================================================================
 
+#=========================================================================
 def read_table(fname):
     d = {}
     # key: (a1, a2), value: "penalty" score
@@ -130,16 +103,6 @@ def align_nw(s, t, delta, gap_p=-1):
                 (M[i-1][j-1] + delta[(s[i-1], t[j-1])], (i-1, j-1)))
     return M, pred
 
-def traceback_nw(s, t, pred):
-    walk = [(len(s), len(t))]
-    prev_i, prev_j = walk[-1]
-    while pred[prev_i][prev_j] != (0, 0):
-        walk.append(pred[prev_i][prev_j])
-        prev_i, prev_j = walk[-1]
-    walk.reverse()
-    return walk
-
-#=============================================================================
 def align_sw(s, t, delta, gap_p=-1):
     M = [[0]*(len(t)+1) for i in range(len(s)+1)]
     pred = [[(0,0)]*(len(t)+1) for i in range(len(s)+1)]
@@ -153,9 +116,16 @@ def align_sw(s, t, delta, gap_p=-1):
                 (0, (0,0)))
     return M, pred
 
+def traceback_nw(s, t, pred):
+    walk = [(len(s), len(t))]
+    prev_i, prev_j = walk[-1]
+    while pred[prev_i][prev_j] != (0, 0):
+        walk.append(pred[prev_i][prev_j])
+        prev_i, prev_j = walk[-1]
+    walk.reverse()
+    return walk
 
 def traceback_sw(s, t, pred, mat, zac_celica=None):
-    #tuki najdemo zaèetek niza
     walk = [zac_celica]
     prev_i, prev_j = walk[-1]
     while pred[prev_i][prev_j] != (0, 0):
@@ -164,8 +134,8 @@ def traceback_sw(s, t, pred, mat, zac_celica=None):
             break
         walk.append((prev_i, prev_j))
     walk.reverse()
-    return walk, prev_i, prev_j
-#======================================================================
+    return walk,prev_i, prev_j
+
 def pp_alignment(s, t, walk):
     def pp(indx, n):
         ret = []
@@ -187,8 +157,8 @@ def pp_alignment(s, t, walk):
     print ps
     print "".join([' ', '|'][ns == nt] for ns, nt in zip(ps, pt))
     print pt
-    
-#=============================================================================
+
+#==============================================================================
 def racunaj_globalno(s,t,risi):
     import time
     t1 = time.time()
@@ -200,12 +170,10 @@ def racunaj_globalno(s,t,risi):
     if risi==1:
         pp_alignment(s, t, w)
     return mat[-1][-1]
-
-#________________________________________________
-
+#==============================================================================
 def racunaj_lokalno(s,t):
     #print "local alignment"
-    mat, pr = align_sw(s, t, delta_book) #blosum50)
+    mat, pr = align_sw(s, t, blosum50,-15)
     loc_score = max(max(r) for r in mat)
     #print "score (of the best) local alignment:", loc_score
     return mat, pr, loc_score
@@ -217,78 +185,15 @@ def izpisi(s,t,mat,pr,loc_score,risi):
             w, z, zt = traceback_sw(s, t, pr, mat, (i, j))
             #print "possible local alignment with score:", mat[i][j]
     print "zaèetek sekvence je na mestu: ", z, "dolžina sekvence pa je: ", len(w)
-
+    print "\n",j
     if risi==1:
         pp_alignment(s, t, w)
     return z, len(w), zt
 
-#=========================================================================      
-def poisci_start(s,t,z,w,zt):
-    maxcena=None
-    maxcena1=None
-    mesto=0
-    mesto_o=None
-    i=z
-    j=z
-    jj=z
-    k=z+w
-    l=z+w
-    M=True
-    while s[k]!='*':
-        k+=1
-    while s[l]!='*':
-        l-=1
-    while True:
-        j-=1
-        if s[j]=='M':
-            cena=racunaj_globalno(s[j:k],t,0)
-            if maxcena1<cena:
-                maxcena1=cena
-                mesto=j
-            else:
-                break
-    while True:
-        jj-=1
-        if s[jj]=='M':
-            cena=racunaj_globalno(s[jj:l],t,0)
-            if maxcena<cena:
-                maxcena=cena
-                mesto=j
-            else: break
-    if maxcena1>maxcena:
-        maxcena=maxcena1
-        mesto=jj
-    
-    print '\n Globalno:'
-    print 'mesto zaèetka:', mesto, 'mesto konca:', k, 'cena:', maxcena
-    racunaj_globalno(s[mesto:k],t,1)
-    mat,pr,m = racunaj_lokalno(s[mesto:z]+s[z+w:k],t[:zt]+t[:zt+w])
-    z1, w1, zt1 = izpisi(s[mesto:k],t,mat,pr,m,0)
-    while True:
-        if i<k:
-            i+=1
-            if s[i]=='M':
-                cena=racunaj_globalno(s[i:k],t,0)
-                if maxcena<cena:
-                    maxcena=cena
-                    mesto_o=i
-                else: break
-        else:
-            break
-    if mesto_o!=None:
-        #print 'mesto zaèetka:', mesto_o, 'mesto konca:', k
-        racunaj_globalno(s[mesto_o:k],t,0)
-    return mesto, k, maxcena
-             
-    
-    
-    
-#=========================================================================
-
-
-seznam_genov=[]
-dobri=["C01"]#,"C02","C03","C05","C08","C25","C36","C29"]
-#dobri=data.keys()
+#==============================================================================
+seznam_la=[]
+dobri=data.keys()
+dobri=['C02']
 for d in dobri:
     #print '\n Analiza gena %s \n'%d
     maxi=None
@@ -296,11 +201,12 @@ for d in dobri:
     maxi_pr=[]
     maxi_s=[]
     maxi_w=0
+
+    
     for i, s in enumerate(seznam):
         #print d, i, len(data[d]) 
         mat,pr,m = racunaj_lokalno(s, data[d])
-        z, w, zt = izpisi(s,data[d],mat,pr,m,1)
-        
+        z, w, zt = izpisi(s,data[d],mat,pr,m,0)
         if m>maxi or (maxi==m and w>maxi_w):
             maxi=m
             maxi_mat=mat
@@ -308,21 +214,44 @@ for d in dobri:
             maxi_s=s
             maxi_i=i
             maxi_w=w
-        
     z, w, zt = izpisi(maxi_s,data[d],maxi_mat,maxi_pr,maxi,1)
-    #print
-    zacetek=None
-    for i in range(len(seznam)):
-        za, ko, m=poisci_start(seznam[i],data[d],z,w,zt)#,Geni[maxi_i])
-        if za>zacetek:
-            zacetek=za
-            konec=ko
-        
-            
-        
-        
-    seznam_genov.append([d,zacetek*3-maxi_i-3,konec*3+maxi_i])
-seznam_genov=sorted(seznam_genov)
-for s in seznam_genov:
-    print "%s\t%d\t%d"%(s[0],s[1],s[2])
+    seznam_la.append([d,z,w])
 
+for i in seznam_la:
+    print i
+    
+    
+
+##if __name__ == "__main__":
+##    s = 'VIVALASVEGAS'
+##    t = 'VIVADAVIS'
+##    print 's:', s,
+##    print 't:', t
+##    print
+##    import time
+##    t1 = time.time()
+##    mat, pr = align_nw(s, t, blosum50)
+##    print "TIME", time.time() - t1
+##
+##    w = traceback_nw(s, t, pr)
+##    print "score of the global alignment:", mat[-1][-1]
+##
+##    pp_alignment(s, t, w)
+##    print
+##
+##
+##    print "local alignment"
+##    mat, pr = align_sw(s, t, delta_book) #blosum50)
+##    loc_score = max(max(r) for r in mat)
+##    print "score (of the best) local alignment:", loc_score
+##
+##    print
+##
+##
+##    for i, r in enumerate(mat):
+##        if loc_score in r:
+##            j = r.index(loc_score)
+##            print "possible local alignment with score:", mat[i][j]
+##            w = traceback_sw(s, t, pr, mat, (i, j))
+##            pp_alignment(s, t, w)
+##            print
