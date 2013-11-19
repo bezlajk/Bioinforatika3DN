@@ -194,14 +194,15 @@ def izpisi(s,t,mat,pr,loc_score,risi):
 
 #==============================================================================
 def rekurzija(z, k, th, n, s, t):#th=trachhold, n natanènost
-    n-=5
+    if n!='a':
+        n-=5
     if abs(z-k) < th: return []
     else:
         mat, pr, m = racunaj_lokalno(s[z:k], t, n)
         z1, k1 = izpisi(s[z:k], t, mat, pr, m, 0)
         ekson1 = rekurzija(z, z1, th, n, s, t)
         ekson2 = rekurzija(z+k1, k, th, n, s, t)
-        return ekson1+ekson2+[z1,k1]
+        return ekson1+ekson2+[z1, k1]
 #==============================================================================
 
 seznam_la=[]
@@ -232,7 +233,7 @@ for d in dobri:
     zacetek=z-dolzina_gena
     konec=z+l+dolzina_gena
 
-    ekson = rekurzija(zacetek, konec, dolzina_gena*0.3, -15, s[zacetek:konec], data[d])
+    ekson = rekurzija(zacetek, konec, dolzina_gena*0.3, 'a', s[zacetek:konec], data[d])
     print ekson
     seznam_la.append([d,z*3+maxi_i,(z+l)*3+maxi_i])
 
