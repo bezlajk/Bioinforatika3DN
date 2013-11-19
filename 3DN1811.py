@@ -202,7 +202,7 @@ for d in dobri:
     maxi_l=0
     for i, s in enumerate(seznam):
         #print d, i, len(data[d]) 
-        mat,pr,m = racunaj_lokalno(s, data[d],-5)
+        mat,pr,m = racunaj_lokalno(s, data[d],-45)
         z, l= izpisi(s,data[d],mat,pr,m,0)
         if m>maxi or (maxi==m and l>maxi_l):
             maxi=m

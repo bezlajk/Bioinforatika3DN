@@ -181,33 +181,35 @@ def racunaj_lokalno(s,t,koef):
     return mat, pr, loc_score
 
 def izpisi(s,t,mat,pr,loc_score,risi):
+    maxi_dolzina=0
     for i, r in enumerate(mat):
         if loc_score in r:
             j = r.index(loc_score)
             w, z = traceback_sw(s, t, pr, mat, (i, j))
             #print "possible local alignment with score:", mat[i][j]
-    print "zaèetek sekvence je na mestu: ", z, "dolžina sekvence pa je: ", len(w)
-    #print "\n",j
+            #print "zaèetek sekvence je na mestu: ", z, "dolžina sekvence pa je: ", len(w), loc_score
     if risi==1:
+        print "zaèetek sekvence je na mestu: ", z, "dolžina sekvence pa je: ", len(w)
         pp_alignment(s, t, w)
     return z, len(w)
 
 #==============================================================================
 def rekurzija(z, k, th, n, s, t):#th=trachhold, n natanènost
-    if n!='a':
-        n-=5
+    #print z,konec
+    #if n!='a':
+    #    n-=5
     if abs(z-k) < th: return []
     else:
-        mat, pr, m = racunaj_lokalno(s[z:k], t, n)
-        z1, k1 = izpisi(s[z:k], t, mat, pr, m, 0)
-        ekson1 = rekurzija(z, z1, th, n, s, t)
-        ekson2 = rekurzija(z+k1, k, th, n, s, t)
-        return ekson1+ekson2+[z1, k1]
+        mat,pr,m = racunaj_lokalno(s[z:k], t, n)
+        zacetek, dolzina = izpisi(s[z:k], t, mat, pr, m, 0)
+        ekson1 = rekurzija(z, z+zacetek, th, n, s, t)
+        ekson2 = rekurzija(z+zacetek+dolzina, k, th, n, s, t)
+        return ekson1+ekson2+[[z+zacetek, z+zacetek+dolzina]]
 #==============================================================================
 
 seznam_la=[]
-#dobri=data.keys()
-dobri=['C01']
+dobri=data.keys()
+#dobri=['C01']
 for d in dobri:
     #print '\n Analiza gena %s \n'%d
     maxi=None
@@ -226,18 +228,31 @@ for d in dobri:
             maxi_s=s
             maxi_i=i
             maxi_l=l
-    z, l = izpisi(maxi_s, data[d], maxi_mat, maxi_pr, maxi, 1)
+    z, l = izpisi(maxi_s, data[d], maxi_mat, maxi_pr, maxi, 0)
     dolzina_gena=len(data[d])
     #print dolzina_gena
+
     koef=-30
     zacetek=z-dolzina_gena
     konec=z+l+dolzina_gena
+    #mat,pr,m = racunaj_lokalno( s[zacetek:konec], data[d],'a')
+    #z, l= izpisi( s[zacetek:konec], data[d],mat,pr,m,1)
+    #print z,l
 
-    ekson = rekurzija(zacetek, konec, dolzina_gena*0.3, 'a', s[zacetek:konec], data[d])
-    print ekson
-    seznam_la.append([d,z*3+maxi_i,(z+l)*3+maxi_i])
+    ekson = rekurzija(zacetek, konec,5 , 'a', s, data[d])
+    #print ekson
+    ekstroni=[ekson[0][0]]
+    for i in range(len(ekson)-1):
+        if abs(ekson[i][1]-ekson[i+1][0])>50:
+            ekstroni.append(ekson[i][1])
+            ekstroni.append(ekson[i+1][0])
+    ekstroni.append(ekson[-1][1])
+    #print ekstroni
+    seznam_la.append([d,ekstroni[0],ekstroni[-1]])
+
+
 
 for sez in seznam_la:
-    print "%s\t%d\t\%s"%(i[0],i[1],i[2])
+    print "%s\t%d\t\%s"%(sez[0],sez[1],sez[2])
     
     
