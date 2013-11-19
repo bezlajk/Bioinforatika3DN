@@ -193,15 +193,15 @@ def izpisi(s,t,mat,pr,loc_score,risi):
     return z, len(w)
 
 #==============================================================================
-##def rekurzija(s,t,d,i):
-##    if d==0:break
-##    else:
-##        mat,pr,m = racunaj_lokalno(s, data[d],-30)
-##        z, l= izpisi(s,data[d],mat,pr,m,0)
-##        d1=rekurzija(s[:z],t,d,i)
-##        d2=rekurzija(s[z+l:],t,d,i)
-##        d-d1
-##        return d
+def rekurzija(z, k, th, n, s, t):#th=trachhold, n natanènost
+    n-=5
+    if abs(z-k) < th: return []
+    else:
+        mat, pr, m = racunaj_lokalno(s[z:k], t, n)
+        z1, k1 = izpisi(s[z:k], t, mat, pr, m, 0)
+        ekson1 = rekurzija(z, z1, th, n, s, t)
+        ekson2 = rekurzija(z+k1, k, th, n, s, t)
+        return ekson1+ekson2+[z1,k1]
 #==============================================================================
 
 seznam_la=[]
@@ -216,7 +216,7 @@ for d in dobri:
     maxi_l=0
     for i, s in enumerate(seznam):
         #print d, i, len(data[d]) 
-        mat,pr,m = racunaj_lokalno(s, data[d],-30)
+        mat,pr,m = racunaj_lokalno(s, data[d],-15)
         z, l= izpisi(s,data[d],mat,pr,m,0)
         if m>maxi or (maxi==m and l>maxi_l):
             maxi=m
@@ -225,34 +225,15 @@ for d in dobri:
             maxi_s=s
             maxi_i=i
             maxi_l=l
-    z, l= izpisi(maxi_s,data[d],maxi_mat,maxi_pr,maxi,1)
+    z, l = izpisi(maxi_s, data[d], maxi_mat, maxi_pr, maxi, 1)
     dolzina_gena=len(data[d])
-    print dolzina_gena 
-    dolzina_najdbe=0
+    #print dolzina_gena
     koef=-30
-    z=z-dolzina_gena
-    z1=z+l+dolzina_gena
-    l=z+l+dolzina_gena
-    l1=z+l+dolzina_gena
-    skvenca=s[z:k1]+s[k2:l]
-    while dolzina_najdbe<0.1*dolzina_gena:
-        koef-=5
-        k1=z1+z
-        k2=z+z1+l1
-        if k2>l:
-            k2=l
-        if k1>l:
-            k1=l
-            
-        mat1,pr1,m1=racunaj_lokalno(seznam,data[d],koef)
-        z1, l1= izpisi(s[z:z1]+s[l1:l],data[d],mat1,pr1,m1,1)
-        dolzina_najdbe=(z1-z)+(l-(z+z1+l1))
-        if z==z1:
-            z=l1
-        if l1==l:
-            l=l1
-        
-    
+    zacetek=z-dolzina_gena
+    konec=z+l+dolzina_gena
+
+    ekson = rekurzija(zacetek, konec, dolzina_gena*0.3, -15, s[zacetek:konec], data[d])
+    print ekson
     seznam_la.append([d,z*3+maxi_i,(z+l)*3+maxi_i])
 
 for sez in seznam_la:
