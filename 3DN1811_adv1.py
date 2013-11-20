@@ -1,3 +1,44 @@
+__author__ = 'Karmen'
+C35 	24567 	24810 	24897 	24948 	24969 	25620
+C19 	14043 	14820 	14916 	14979 	14988 	15087 	15171 	15210 	15222 	15267 	15402 	15456 	15459 	15513
+C18 	22587 	22617 	22782 	22833 	22899 	23061 	23094 	23136 	23235 	23289 	23418 	23490 	23523 	23589 	23664 	23712 	23787 	23844 	23895 	23976
+C39 	21294 	21423 	21489 	21564 	21591 	21651 	21759 	21918 	21948 	22074 	22218 	22233 	22233 	22254 	22332 	22440 	22437 	22518 	22569 	22686 	22740 	22839
+C38 	4446 	4611 	4761 	4833 	4977 	5094 	5121 	5187 	5202 	5265 	5328 	5358 	5514 	5538 	5544 	5628
+C34 	21306 	21414 	21450 	21528 	21573 	21789
+C13 	12882 	13026 	13074 	13125 	13221 	13251 	13311 	13365 	13443 	13524 	13554 	13605 	13713 	13755 	13812 	13899
+C12 	4941 	5223 	5319 	5406 	5523 	5589 	5598 	5661 	5802 	5889 	5970 	6006
+C11 	4209 	4326 	4389 	4428 	4485 	4572 	4590 	4629 	4683 	4746 	4818 	4866 	4869 	4917
+C10 	10764 	10881 	10956 	11022 	11112 	11169 	11289 	11508 	11631 	11742 	11781 	11856 	12003 	12030
+C17 	1425 	1617 	1719 	1779 	1857 	1938 	2103 	2145 	2301 	2319 	2325 	2406 	2466 	2490 	2646 	2664 	2664 	2751
+C16 	13338 	13740
+C15 	4737 	4842 	4950 	5094 	5103 	5184 	5274 	5334 	5373 	5463 	5529 	5583 	5670 	5700 	5808 	5937 	6051 	6144 	6147 	6174
+C14 	23715 	23970 	23973 	24045
+C37 	13299 	13356 	13449 	13506 	13605 	13674 	13746 	13794 	13800 	13863 	13941 	13980 	14019 	14055 	14154 	14184 	14196 	14217
+C36 	348 	375 	561 	618 	621 	675 	828 	876 	873 	1032 	1218 	1236 	1398 	1512 	1530 	1653 	1722 	1770 	1785 	1824 	1971 	2046
+C31 	19503 	19527 	19632 	19665 	19794 	19824 	19953 	19968 	19971 	20157 	20172 	20217 	20301 	20334
+C30 	15288 	15390 	15519 	15576 	15663 	15729 	15786 	15846 	15921 	15999 	16005 	16065 	16179 	16194 	16191 	16287 	16365 	16416
+C33 	8988 	9123 	9237 	9285 	9387 	9453 	9546 	9654 	9678 	9741 	9747 	9792 	9855 	9897
+C32 	2142 	2175 	2307 	2343 	2391 	2430 	2514 	2565 	2646 	2715 	2736 	2784 	2826 	2892 	2928 	3000 	3075 	3135 	3135 	3162 	3285 	3399
+C22 	13896 	13977 	14136 	14178 	14238 	14295 	14322 	14448 	14604 	14649 	14796 	14865 	14976 	15018
+C23 	6561 	7071 	7188 	7236 	7329 	7485 	7500 	7539 	7614 	7677
+C20 	24900 	25692
+C21 	8163 	8310 	8364 	8391 	8415 	8457 	8577 	8685 	8697 	8733 	8802 	8931 	8973 	9015 	9036 	9162 	9270 	9345
+C26 	13617 	13791 	13839 	13890 	13920 	13992 	14022 	14154
+C27 	14898 	14934 	15045 	15084 	15159 	15204 	15234 	15273 	15432 	15477 	15528 	15681 	15777 	15804 	15927 	15990 	15999 	16092 	16209 	16227 	16251 	16326 	16428 	16482
+C24 	3840 	3924 	4017 	4068 	4137 	4188 	4296 	4323 	4353 	4413 	4509 	4548 	4545 	4587 	4689 	4758
+C25 	6804 	6888 	7032 	7083 	7212 	7290 	7329 	7365 	7455 	7530 	7656 	7713 	7833 	7890
+C28 	19113 	19272 	19308 	19410 	19560 	19788 	19824 	19893 	19977 	20040 	20184 	20208
+C29 	4485 	4602 	4695 	4932 	5007 	5067 	5181 	5250 	5316 	5457 	5532 	5583 	5661 	5682 	5817 	5883
+C08 	12252 	12393 	12426 	12471 	12519 	12549 	12594 	12648 	12657 	12885 	12897 	13008
+C09 	14901 	15174 	15216 	15246 	15309 	15324 	15342 	15402 	15417 	15450 	15528 	15549 	15552 	15606
+C00 	16071 	16248 	16281 	16524 	16548 	16710 	16725 	16770 	16899 	16935 	16980 	17010 	17127 	17178 	17190 	17211 	17322 	17439
+C01 	24051 	24174 	24171 	24237 	24318 	24348 	24450 	24501 	24522 	24624 	24714 	24735 	24786 	24855 	24882 	24960 	24975 	25242
+C02 	20010 	20148 	20226 	20289 	20319 	20391 	20433 	20487 	20505 	20544 	20607 	20640 	20643 	20832 	20925 	20982 	20997 	21033 	21087 	21132
+C03 	14910 	15045 	15126 	15183 	15186 	15225 	15354 	15411 	15417 	15471 	15606 	15678 	15792 	15828 	15915 	15990 	16011 	16035 	16173 	16308
+C04 	18813 	18951 	18951 	18996 	19071 	19098 	19116 	19197 	19236 	19347 	19356 	19530
+C05 	9366 	9567 	9675 	9723 	9774 	9789 	9855 	9996 	10113 	10158 	10173 	10218 	10257 	10290 	10410 	10437 	10443 	10506 	10575 	10629
+C06 	22392 	23076 	23142 	23169 	23193 	23409
+C07 	20976 	21063 	21144 	21174 	21171 	21282 	21360 	21411 	21513 	21603 	21633 	21741 	21792 	21855 	21894 	21915
 # -*- coding: cp1250 -*-
 from Bio import SeqIO
 from Bio import Entrez
@@ -39,7 +80,7 @@ def read(ime, m):
             s=r.split(",")
             matrika.append(s)
         return matrika
-        
+
 
 data=read("aminoacids0-39.txt",'d')
 amino=read("amino_file.txt",'a')
@@ -57,7 +98,7 @@ def prevedi(data):
         seznam.append(str(Bio.Seq.Seq(data[i:]).translate(table=6)))
     return seznam
 
-data1_rc=str(Bio.Seq.Seq(data1).reverse_complement())   
+data1_rc=str(Bio.Seq.Seq(data1).reverse_complement())
 seznam=prevedi(data1)+prevedi(data1_rc)
 ##seznam = prevedi(geni1,data1)+prevedi(geni2,data1[::-1])
 ##print seznam[0]
@@ -187,19 +228,19 @@ def izpisi(s,t,mat,pr,loc_score,risi):
             j = r.index(loc_score)
             w, z = traceback_sw(s, t, pr, mat, (i, j))
             #print "possible local alignment with score:", mat[i][j]
-            #print "zaËetek sekvence je na mestu: ", z, "dolûina sekvence pa je: ", len(w), loc_score
+            #print "zaƒçetek sekvence je na mestu: ", z, "dol≈æina sekvence pa je: ", len(w), loc_score
             #if len(w)<min_dolzina:
             #    min_dolzina=len(w[0])
             #    pravi=[z,len(w[0]),w]
             #print z,w,w[0][1],len(w)
             wt=w[0][1]
     if risi==1:
-        print "zaËetek sekvence je na mestu: ", z, "dolûina sekvence pa je: ", len(w)
+        print "zaƒçetek sekvence je na mestu: ", z, "dol≈æina sekvence pa je: ", len(w)
         pp_alignment(s, t, w)#pravi[2])
     return z,len(w), wt #pravi[0], pravi[1]
 
 #==============================================================================
-def rekurzija(z, k, th, n, s, t):#th=trachhold, n natanËnost
+def rekurzija(z, k, th, n, s, t):#th=trachhold, n natanƒçnost
     #print z,konec
     if n!='a':
         n-=5
@@ -224,7 +265,7 @@ for d in dobri:
     maxi_s=[]
     maxi_l=0
     for i, s in enumerate(seznam):
-        #print d, i, len(data[d]) 
+        #print d, i, len(data[d])
         mat,pr,m = racunaj_lokalno(s, data[d],-10)
         z, l, _= izpisi(s,data[d],mat,pr,m,0)
         if m>maxi or (maxi==m and l>maxi_l):
@@ -242,22 +283,22 @@ for d in dobri:
     konec=z+l+dolzina_gena
     #print s[8046:8219]
     #print z, z+zt, s[z:z+l]
-    ekson = rekurzija(zacetek, konec, dolzina_gena*0.20, -100, s, data[d])
+    #ekson = rekurzija(zacetek, konec, dolzina_gena*0.20, -100, s, data[d])
     #print ekson
-    ekson=sorted(ekson)
-    ekstroni=[z-zt]
-    i=0
-    j=0
-    while i<(len(ekson)-1):
-        if ekson[i][0]>ekstroni[0]:
-            if abs(ekson[i][0]-ekson[i][1])>=3:
-                if abs(ekson[j][1]-ekson[i+1][0])>10:
-                    ekstroni.append(ekson[i][1])
-                    ekstroni.append(ekson[i+1][0])
-                j=i
-            i+=1
-    ekstroni.append(ekson[-1][1])
-    seznam_la.append([d,ekstroni])
+    #ekson=sorted(ekson)
+    #ekstroni=[z-zt]
+    #i=0
+    #j=0
+    #while i<(len(ekson)-1):
+    #    if ekson[i][0]>ekstroni[0]:
+    #        if abs(ekson[i][0]-ekson[i][1])>=3:
+    #            if abs(ekson[j][1]-ekson[i+1][0])>10:
+    #                ekstroni.append(ekson[i][1])
+    #                ekstroni.append(ekson[i+1][0])
+    #           j=i
+     #       i+=1
+    #ekstroni.append(ekson[-1][1])
+    seznam_la.append([d,z+zt,z+l+zt])
 
 for sez in seznam_la:
     print "%s"%sez[0],
