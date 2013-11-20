@@ -196,8 +196,8 @@ def izpisi(s,t,mat,pr,loc_score,risi):
 #==============================================================================
 def rekurzija(z, k, th, n, s, t):#th=trachhold, n natanènost
     #print z,konec
-    #if n!='a':
-    #    n-=5
+    if n!='a':
+        n-=5
     if abs(z-k) < th: return []
     else:
         mat,pr,m = racunaj_lokalno(s[z:k], t, n)
@@ -209,7 +209,7 @@ def rekurzija(z, k, th, n, s, t):#th=trachhold, n natanènost
 
 seznam_la=[]
 dobri=data.keys()
-#dobri=['C01']
+#dobri=['C03']
 for d in dobri:
     #print '\n Analiza gena %s \n'%d
     maxi=None
@@ -228,31 +228,39 @@ for d in dobri:
             maxi_s=s
             maxi_i=i
             maxi_l=l
+    #print d
     z, l = izpisi(maxi_s, data[d], maxi_mat, maxi_pr, maxi, 0)
     dolzina_gena=len(data[d])
     #print dolzina_gena
 
     koef=-30
-    zacetek=z-dolzina_gena
-    konec=z+l+dolzina_gena
+    zacetek=z-dolzina_gena/3
+    konec=z+l+dolzina_gena/3
     #mat,pr,m = racunaj_lokalno( s[zacetek:konec], data[d],'a')
     #z, l= izpisi( s[zacetek:konec], data[d],mat,pr,m,1)
     #print z,l
-
-    ekson = rekurzija(zacetek, konec,5 , 'a', s, data[d])
+    ekson = rekurzija(zacetek, konec, 10 ,'a', s, data[d])
     #print ekson
+    ekson=sorted(ekson)
     ekstroni=[ekson[0][0]]
-    for i in range(len(ekson)-1):
-        if abs(ekson[i][1]-ekson[i+1][0])>50:
-            ekstroni.append(ekson[i][1])
-            ekstroni.append(ekson[i+1][0])
+    i=0
+    j=0
+    while i<(len(ekson)-1):
+        if abs(ekson[i][0]-ekson[i][1])>=2:
+            if abs(ekson[j][1]-ekson[i+1][0])>10:
+                ekstroni.append(ekson[i][1]*3+maxi_i)
+                ekstroni.append(ekson[i+1][0]*3+maxi_i)
+            j=i
+        i+=1
     ekstroni.append(ekson[-1][1])
     #print ekstroni
-    seznam_la.append([d,ekstroni[0],ekstroni[-1]])
+    #seznam_la.append([d,ekstroni[0],ekstroni[-1]])
+    seznam_la.append([d,ekstroni])
 
 
 
 for sez in seznam_la:
-    print "%s\t%d\t\%s"%(sez[0],sez[1],sez[2])
-    
-    
+    print "%s"%sez[0],
+    for i in range(0,len(sez[1])):
+        print "\t%d"%(sez[1][i]*3+maxi_i),
+print
